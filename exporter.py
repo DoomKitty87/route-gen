@@ -33,6 +33,7 @@ for f in files:
                 panes.append([x + xchunk * 16, y, z + zchunk * 16])
 
 #Changed from per-cycle due to the issue of parsing an indeterminate amount of json objects.
+'''
 with open("blocks.txt", "a") as f:
   print(str(len(blocks)) + " blocks")
   data = json.dumps(blocks)
@@ -45,10 +46,10 @@ with open("panes.txt", "a") as f:
 
 '''
 for b in blocks:
-  blocksexp += f"{b[0]},{b[1]},{b[2]}\n"
+  blocksexp += f"{b[0]} {b[1]} {b[2]}\n"
   
 for p in panes:
-  panesexp += f"{p[0]},{p[1]},{p[2]}\n"
+  panesexp += f"{p[0]} {p[1]} {p[2]}\n"
 
 with open("blocks.txt", "w") as f:
   print(str(blocksexp.count("\n")) + " blocks")
@@ -57,4 +58,3 @@ with open("blocks.txt", "w") as f:
 with open("panes.txt", "w") as f:
   print(str(panesexp.count("\n")) + " panes")
   f.write(panesexp)
-'''
