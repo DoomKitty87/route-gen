@@ -12,24 +12,25 @@ int main() {
   blockFile.open("blocks.txt");
   paneFile.open("panes.txt");
 
-  vector<vector<int> > blocks;
-  vector<vector<int> > panes;
+  vector<int> blocks;
+  vector<int> panes;
 
   int x, y, z;
   
-  while (blockFile) {
-    blockFile >> x;
-    blockFile >> y;
-    blockFile >> z;
-    blocks.push_back(vector<int> {x, y, z});
+  while (blockFile >> x >> y >> z) {
+    //cout << x << " " << y << " " << z << endl;
+    blocks.push_back(x);
+    blocks.push_back(y);
+    blocks.push_back(z);
   }
 
-  while (paneFile) {
-    paneFile >> x;
-    paneFile >> y;
-    paneFile >> z;
-    panes.push_back(vector<int> {x, y, z});
+  while (paneFile >> x >> y >> z) {
+    //cout << x << " " << y << " " << z << endl;
+    panes.push_back(x);
+    panes.push_back(y);
+    panes.push_back(z);
   }
 
-  return 0;
+  blockFile.close();
+  paneFile.close();
 }
