@@ -6,14 +6,15 @@ files = ["r.0.0.mca", "r.0.1.mca", "r.1.0.mca", "r.1.1.mca"]
 blocksexp = ""
 panesexp = ""
 
+blocks = []
+panes = []
+
 with open("blocks.txt", "w") as f:
   f.write("")
 with open("panes.txt", "w") as f:
   f.write("")
 
 for f in files:
-    blocks = []
-    panes = []
     region = anvil.Region.from_file(f)
     regioncoords = f.split(".")
     for cx in range(32):
@@ -30,15 +31,17 @@ for f in files:
                 blocks.append([x + xchunk * 16, y, z + zchunk * 16])
               elif chunk.get_block(x, y, z).id == 160:
                 panes.append([x + xchunk * 16, y, z + zchunk * 16])
-    with open("blocks.txt", "a") as f:
-      print(str(len(blocks)) + " blocks")
-      data = json.dumps(blocks)
-      f.write(data)
 
-    with open("panes.txt", "a") as f:
-      print(str(len(panes)) + " panes")
-      data = json.dumps(panes)
-      f.write(data)
+#Changed from per-cycle due to the issue of parsing an indeterminate amount of json objects.
+with open("blocks.txt", "a") as f:
+  print(str(len(blocks)) + " blocks")
+  data = json.dumps(blocks)
+  f.write(data)
+
+with open("panes.txt", "a") as f:
+  print(str(len(panes)) + " panes")
+  data = json.dumps(panes)
+  f.write(data)
 
 '''
 for b in blocks:
