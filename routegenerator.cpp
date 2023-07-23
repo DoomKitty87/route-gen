@@ -36,8 +36,66 @@ int main() {
 
   //Analyzing vein positions
   //VeinTypes should have 2 entries for each type of vein- one for blocks, and one for panes. Each entry contains the data of offset on each axis for each block/pane in the vein (excluding the one that is used as a base).
-  vector<vector<int> > veinTypes = {{-1, 3, 5, 2, 1, 4}, {1, 24, 5, 32, 9, 9}, {2, 1, 2, 5, 2, 3}, {2, 1, 6, 43, 2, 4}};
-  vector<vector<int> > padPositions = {{-5, -6, 3}, {2, 3, -5}};
+  vector<vector<int> > veinTypes = {{0, 1, 0,
+                                    0, 0, 1,
+                                    -1, 0, 1,
+                                    -1, 1, 0,
+                                    0, 1, 1,
+                                    -1, 1, 1,
+                                    -1, 1, 0,
+                                    -1, 2, 0,
+                                    -1, 2, 1,
+                                    -2, 2, 1,
+                                    -2, 3, 0,
+                                    -2, 3, 1,
+                                    -3, 3, 1,
+                                    -3, 4, 1,
+                                    -4, 4, 1,
+                                    -4, 5, 1
+                                    }, {-1, 0, 0,
+                                        -2, 1, 1,
+                                        0, 2, 1,
+                                        -2, 2, 0,
+                                        -1, 3, 0,
+                                        -1, 3, 1,
+                                        -3, 3, 0,
+                                        -2, 4, 1,
+                                        -3, 4, 0,
+                                        -3, 5, 1,
+                                        -5, 5, 1,
+                                        -5, 6, 1,
+                                        -4, 6, 1
+                                        }, {0, 1, 0,
+                                        0, 1, 1,
+                                        0, 2, 0,
+                                        0, 2, 1,
+                                        1, 2, 1,
+                                        1, 2, 0,
+                                        0, 3, 1,
+                                        1, 3, 0,
+                                        1, 3, 1,
+                                        2, 3, 1,
+                                        1, 4, 1,
+                                        2, 4, 1,
+                                        2, 4, 2,
+                                        2, 5, 1,
+                                        2, 5, 2,
+                                        3, 5, 2,
+                                        3, 6, 2
+                                        }, {2, 2, 0,
+                                        2, 2, 1,
+                                        2, 3, 0,
+                                        1, 3, 2,
+                                        2, 3, 2,
+                                        1, 4, 0,
+                                        1, 4, 2,
+                                        2, 4, 1,
+                                        3, 5, 1,
+                                        4, 6, 2,
+                                        4, 7, 2,
+                                        3, 7, 2
+                                        }};
+  vector<vector<int> > padPositions = {{-2, -1, 0}, {1, -1, 1}};
   vector<int> viablePads;
   for (int i = 0; i < veinTypes.size() / 2; i++) {
     for (int j = 0; j < blocks.size(); j++) {
