@@ -191,7 +191,7 @@ int main() {
       for (int k = 0; k < veinTypes[i].size() / 3; k++) {
         found = false;
         for (int l = 0; l < blocks.size(); l++) {
-          if (l % 3 == 0) continue;
+          if (l % 3 != 0) continue;
           int x2 = blocks[l];
           int y2 = blocks[l + 1];
           int z2 = blocks[l + 2];
@@ -208,7 +208,7 @@ int main() {
       for (int k = 0; k < veinTypes[i + 1].size() / 3; k++) {
         found = false;
         for (int l = 0; l < panes.size(); l++) {
-          if (l % 3 == 0) continue;
+          if (l % 3 != 0) continue;
           int x2 = panes[l];
           int y2 = panes[l + 1];
           int z2 = panes[l + 2];

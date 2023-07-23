@@ -27,7 +27,7 @@ for f in files:
           for y in range(256):
             for z in range(16):
               # print(chunk.get_block(x, y, z).id)
-              if ((x + xchunk * 16 > 460 and x + xchunk * 16 < 565) or (z + zchunk * 16 > 460 and z + zchunk * 16 < 565)): continue
+              if ((x + xchunk * 16 > 460 and x + xchunk * 16 < 565) and (z + zchunk * 16 > 460 and z + zchunk * 16 < 565)): continue
               if chunk.get_block(x, y, z).id == 95:
                 blocks.append([x + xchunk * 16, y, z + zchunk * 16])
               elif chunk.get_block(x, y, z).id == 160:
