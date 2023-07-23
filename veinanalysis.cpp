@@ -96,6 +96,89 @@ int main() {
                                         3, 7, 2
                                         }};
   vector<vector<int> > padPositions = {{-2, -1, 0}, {1, -1, 1}};
+  vector<vector<int> > rotatedTypes;
+  for (int i = 0; i < veinTypes.size() / 2; i++) {
+    vector<int> rotatedBlocks1;
+    vector<int> rotatedBlocks2;
+    vector<int> rotatedBlocks3;
+    vector<int> rotatedBlocks4;
+    vector<int> rotatedPanes1;
+    vector<int> rotatedPanes2;
+    vector<int> rotatedPanes3;
+    vector<int> rotatedPanes4;
+    for (int j = 0; j < veinTypes[i].size(); j++) {
+      if (j % 3 != 0) continue;
+      int x = veinTypes[i][j];
+      int y = veinTypes[i][j + 1];
+      int z = veinTypes[i][j + 2];
+      rotatedBlocks1.push_back(x);
+      rotatedBlocks1.push_back(y);
+      rotatedBlocks1.push_back(z);
+      rotatedBlocks2.push_back(z);
+      rotatedBlocks2.push_back(y);
+      rotatedBlocks2.push_back(-x);
+      rotatedBlocks3.push_back(-x);
+      rotatedBlocks3.push_back(y);
+      rotatedBlocks3.push_back(-z);
+      rotatedBlocks4.push_back(-z);
+      rotatedBlocks4.push_back(y);
+      rotatedBlocks4.push_back(x);
+    }
+    for (int j = 0; j < veinTypes[i + 1].size(); j++) {
+      if (j % 3 != 0) continue;
+      int x = veinTypes[i + 1][j];
+      int y = veinTypes[i + 1][j + 1];
+      int z = veinTypes[i + 1][j + 2];
+      rotatedPanes1.push_back(x);
+      rotatedPanes1.push_back(y);
+      rotatedPanes1.push_back(z);
+      rotatedPanes2.push_back(z);
+      rotatedPanes2.push_back(y);
+      rotatedPanes2.push_back(-x);
+      rotatedPanes3.push_back(-x);
+      rotatedPanes3.push_back(y);
+      rotatedPanes3.push_back(-z);
+      rotatedPanes4.push_back(-z);
+      rotatedPanes4.push_back(y);
+      rotatedPanes4.push_back(x);
+    }
+  rotatedTypes.push_back(rotatedBlocks1);
+  rotatedTypes.push_back(rotatedPanes1);
+  rotatedTypes.push_back(rotatedBlocks2);
+  rotatedTypes.push_back(rotatedPanes2);
+  rotatedTypes.push_back(rotatedBlocks3);
+  rotatedTypes.push_back(rotatedPanes3);
+  rotatedTypes.push_back(rotatedBlocks4);
+  rotatedTypes.push_back(rotatedPanes4);
+  }
+  veinTypes = rotatedTypes;
+  vector<vector<int> > rotatedPads;
+  for (int i = 0; i < padPositions.size(); i++) {
+    vector<int> rotatedPads1;
+    vector<int> rotatedPads2;
+    vector<int> rotatedPads3;
+    vector<int> rotatedPads4;
+    int x = padPositions[i][0];
+    int y = padPositions[i][1];
+    int z = padPositions[i][2];
+    rotatedPads1.push_back(x);
+    rotatedPads1.push_back(y);
+    rotatedPads1.push_back(z);
+    rotatedPads2.push_back(z);
+    rotatedPads2.push_back(y);
+    rotatedPads2.push_back(-x);
+    rotatedPads3.push_back(-x);
+    rotatedPads3.push_back(y);
+    rotatedPads3.push_back(-z);
+    rotatedPads4.push_back(-z);
+    rotatedPads4.push_back(y);
+    rotatedPads4.push_back(x);
+    rotatedPads.push_back(rotatedPads1);
+    rotatedPads.push_back(rotatedPads2);
+    rotatedPads.push_back(rotatedPads3);
+    rotatedPads.push_back(rotatedPads4);
+  }
+  padPositions = rotatedPads;
   vector<int> viablePads;
   for (int i = 0; i < veinTypes.size() / 2; i++) {
     for (int j = 0; j < blocks.size(); j++) {
@@ -142,7 +225,40 @@ int main() {
       viablePads.push_back(z + padPositions[i][2]);
     }
   }
+
+  for (int i = 0; i < viablePads.size() / 3; i++) {
+    cout << viablePads[i] << " " << viablePads[i + 1] << " " << viablePads[i + 2] << endl;
+  }
 }
+/*
+VeinTypes need to be copied for all four possible rotations.
+vector<vector<int> > rotatedTypes;
+for (int i = 0; i < veinTypes.size() / 2; i++) {
+  rotatedTypes.push_back(vector<int>());
+  rotatedTypes.push_back(vector<int>());
+  for (int j = 0; j < veinTypes[i].size(); j++) {
+    if (j % 3 != 0) continue;
+    int x = veinTypes[i][j];
+    int y = veinTypes[i][j + 1];
+    int z = veinTypes[i][j + 2];
+    rotatedTypes[i].push_back(x, y, z);
+    rotatedTypes[i].push_back(z, y, -x);
+    rotatedTypes[i].push_back(-x, y, -z);
+    rotatedTypes[i].push_back(-z, y, x);
+  }
+  for (int j = 0; j < veinTypes[i + 1].size(); j++) {
+    if (j % 3 != 0) continue;
+    int x = veinTypes[i + 1][j];
+    int y = veinTypes[i + 1][j + 1];
+    int z = veinTypes[i + 1][j + 2];
+    rotatedTypes[i + 1].push_back(x, y, z);
+    rotatedTypes[i + 1].push_back(z, y, -x);
+    rotatedTypes[i + 1].push_back(-x, y, -z);
+    rotatedTypes[i + 1].push_back(-z, y, x);
+  }
+}
+veinTypes = rotatedTypes;
+*/
 
 /*
 int veinTypes[] = [[-1, 3, 5, 2, 1, 4], [1, 24, 5, 32, 9, 9], [2, 1, 2, 5, 2, 3], [2, 1, 6, 43, 2, 4]];
