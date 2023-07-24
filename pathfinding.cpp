@@ -71,14 +71,14 @@ int main() {
         int taily = padCoords[j + 1];
         int tailz = padCoords[j + 2];
         bool blocked = false;
-        int xdiff = tailx - headx;
-        int ydiff = taily - heady;
-        int zdiff = tailz - headz;
-        int interval = floor(abs(xdiff) + abs(ydiff) + abs(zdiff));
+        int xdist = tailx - headx;
+        int ydist = taily - heady;
+        int zdist = tailz - headz;
+        int interval = floor(abs(xdist) + abs(ydist) + abs(zdist));
         for (int k = 0; k < interval; k++) {
-          int x = round(headx + (float(xdiff) / interval) * k);
-          int y = round(heady + (float(ydiff) / interval) * k);
-          int z = round(headz + (float(zdiff) / interval) * k);
+          int x = round(headx + (float(xdist) / interval) * k);
+          int y = round(heady + (float(ydist) / interval) * k);
+          int z = round(headz + (float(zdist) / interval) * k);
           for (int l = 0; l < gemstones.size() / 3; l++) {
             if (x == gemstones[l * 3] && y == gemstones[l * 3 + 1] && z == gemstones[l * 3 + 2]) {
               blocked = true;
