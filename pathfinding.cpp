@@ -12,6 +12,7 @@ int main() {
   padFile.open("viablepads.txt");
   int x, y, z;
   while (padFile >> x >> y >> z) {
+    cout << x << " " << y << " " << z << endl;
     padCoords.push_back(x);
     padCoords.push_back(y);
     padCoords.push_back(z);
@@ -71,9 +72,9 @@ int main() {
         int headx = path[path.size() - 3];
         int heady = path[path.size() - 2] + 2;
         int headz = path[path.size() - 1];
-        int tailx = padCoords[j];
-        int taily = padCoords[j + 1];
-        int tailz = padCoords[j + 2];
+        int tailx = padCoords[j * 3];
+        int taily = padCoords[j * 3 + 1];
+        int tailz = padCoords[j * 3 + 2];
         bool blocked = false;
         int xdist = tailx - headx;
         int ydist = taily - heady;
@@ -100,15 +101,17 @@ int main() {
         */
 
         //Calculate weight
-        int xdiff = abs(path[path.size() - 3] - padCoords[j]);
-        int ydiff = abs(path[path.size() - 2] - padCoords[j + 1]);
-        int zdiff = abs(path[path.size() - 1] - padCoords[j + 2]);
+        int xdiff = abs(path[path.size() - 3] - padCoords[j * 3]);
+        int ydiff = abs(path[path.size() - 2] - padCoords[j * 3 + 1]);
+        int zdiff = abs(path[path.size() - 1] - padCoords[j * 3 + 2]);
         int dist = xdiff + ydiff + zdiff;
-        int startdiffx = abs(path[0] - padCoords[j]);
-        int startdiffy = abs(path[1] - padCoords[j + 1]);
-        int startdiffz = abs(path[2] - padCoords[j + 2]);
+        int startdiffx = abs(path[0] - padCoords[j * 3]);
+        int startdiffy = abs(path[1] - padCoords[j * 3 + 1]);
+        int startdiffz = abs(path[2] - padCoords[j * 3 + 2]);
         int startdist = startdiffx + startdiffy + startdiffz;
-        weight = pow(dist, 3) + ((path.size() / 3) / float(desiredPathLength)) * pow(startdist, -5);
+        //cout << startdist << " " << dist << endl;
+        weight = pow(dist, 3) * (1 / float(pow(startdist, 0.1 * (float(desiredPathLength) / (usedPads.size() + 1)))));
+        //cout << weight << endl;
         weightChart.push_back(weight);
         //std::cout << weight << endl;
       }
@@ -117,7 +120,7 @@ int main() {
       //cout << weightChart.size() << endl;
       for (int j = 0; j < weightChart.size(); j++) {
         //cout << "Sorting weightChart." << endl;
-        if (j == i) continue;
+        //if (j == i) continue;
         for (int k = 0; k < usedPads.size(); k++) {
           //cout << "Checking for used pads." << endl;
           if (j == usedPads[k]) {
@@ -151,7 +154,7 @@ int main() {
     }
     string pathOutputTmp = "[";
     for (int j = 0; j < path.size() / 3; j++) {
-      pathOutputTmp += "{\"x\":" + to_string(path[j * 3]) + ",\"y\":" + to_string(path[j * 3 + 1]) + ",\"z\":" + to_string(path[j * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":" + to_string(j + 1) + "}}";
+      pathOutputTmp += "{\"x\":" + to_string(path[j * 3]) + ",\"y\":" + to_string(path[j * 3 + 1]) + ",\"z\":" + to_string(path[j * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":\"" + to_string(j + 1) + "\"}}";
       if (j != path.size() / 3 - 1) pathOutputTmp += ",";
     }
     pathOutputTmp += "]";
@@ -169,7 +172,7 @@ int main() {
   }
   string pathOutput = "[";
   for (int i = 0; i < lowestAvgDistPath.size() / 3; i++) {
-    pathOutput += "{\"x\":" + to_string(lowestAvgDistPath[i * 3]) + ",\"y\":" + to_string(lowestAvgDistPath[i * 3 + 1]) + ",\"z\":" + to_string(lowestAvgDistPath[i * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":" + to_string(i + 1) + "}}";
+    pathOutput += "{\"x\":" + to_string(lowestAvgDistPath[i * 3]) + ",\"y\":" + to_string(lowestAvgDistPath[i * 3 + 1]) + ",\"z\":" + to_string(lowestAvgDistPath[i * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":\"" + to_string(i + 1) + "\"}}";
     if (i != lowestAvgDistPath.size() / 3 - 1) pathOutput += ",";
   }
   pathOutput += "]";

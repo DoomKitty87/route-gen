@@ -185,18 +185,18 @@ int main() {
   for (int i = 0; i < veinTypes.size() / 2; i++) {
     for (int j = 0; j < blocks.size(); j++) {
       if (j % 3 != 0) continue;
-      int x = blocks[j];
-      int y = blocks[j + 1];
-      int z = blocks[j + 2];
+      int x = blocks[j * 3];
+      int y = blocks[j * 3 + 1];
+      int z = blocks[j * 3 + 2];
       bool found = false;
       //Checking Blocks
       for (int k = 0; k < veinTypes[i].size() / 3; k++) {
         found = false;
         for (int l = 0; l < blocks.size(); l++) {
           if (l % 3 != 0) continue;
-          int x2 = blocks[l];
-          int y2 = blocks[l + 1];
-          int z2 = blocks[l + 2];
+          int x2 = blocks[l * 3];
+          int y2 = blocks[l * 3 + 1];
+          int z2 = blocks[l * 3 + 2];
           if (x2 == x + veinTypes[i][k * 3] && y2 == y + veinTypes[i][k * 3 + 1] && z2 == z + veinTypes[i][k * 3 + 2]) {
             found = true;
             break;
@@ -211,9 +211,9 @@ int main() {
         found = false;
         for (int l = 0; l < panes.size(); l++) {
           if (l % 3 != 0) continue;
-          int x2 = panes[l];
-          int y2 = panes[l + 1];
-          int z2 = panes[l + 2];
+          int x2 = panes[l * 3];
+          int y2 = panes[l * 3 + 1];
+          int z2 = panes[l * 3 + 2];
           if (x2 == x + veinTypes[i + 1][k * 3] && y2 == y + veinTypes[i + 1][k * 3 + 1] && z2 == z + veinTypes[i + 1][k * 3 + 2]) {
             found = true;
             break;
