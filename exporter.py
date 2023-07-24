@@ -34,6 +34,7 @@ for f in files:
                 panes.append([x + xchunk * 16, y, z + zchunk * 16])
 
 #Changed from per-cycle due to the issue of parsing an indeterminate amount of json objects.
+#Could also just save it every cycle, or every n cycles.
 '''
 with open("blocks.txt", "a") as f:
   print(str(len(blocks)) + " blocks")
