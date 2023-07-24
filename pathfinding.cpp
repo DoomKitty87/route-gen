@@ -18,6 +18,29 @@ int main() {
   }
   padFile.close();
 
+  vector<int> gemstones;
+
+  //Loading gemstone coordinates
+  ifstream blockFile;
+  ifstream paneFile;
+
+  blockFile.open("blocks.txt");
+  paneFile.open("panes.txt");
+
+  int blockx, blocky, blockz;
+  while (blockFile >> blockx >> blocky >> blockz) {
+    gemstones.push_back(blockx);
+    gemstones.push_back(blocky);
+    gemstones.push_back(blockz);
+  }
+  blockFile.close();
+  while (paneFile >> blockx >> blocky >> blockz) {
+    gemstones.push_back(blockx);
+    gemstones.push_back(blocky);
+    gemstones.push_back(blockz);
+  }
+  paneFile.close();
+
   int desiredPathLength = 170;
 
   int lowestAvgDist = INFINITY;
@@ -40,6 +63,35 @@ int main() {
       for (int j = 0; j < padCoords.size() / 3; j++) {
         float weight = 0;
         //Calculate LOS, if blocked, weight = INFINITY
+        int headx = path[path.size() - 3];
+        int heady = path[path.size() - 2] + 2;
+        int headz = path[path.size() - 1];
+        int tailx = padCoords[j];
+        int taily = padCoords[j + 1];
+        int tailz = padCoords[j + 2];
+        bool blocked = false;
+        int xdiff = tailx - headx;
+        int ydiff = taily - heady;
+        int zdiff = tailz - headz;
+        int interval = floor(abs(xdiff) + abs(ydiff) + abs(zdiff));
+        for (int k = 0; k < interval; k++) {
+          int x = round(headx + (float(xdiff) / interval) * k);
+          int y = round(heady + (float(ydiff) / interval) * k);
+          int z = round(headz + (float(zdiff) / interval) * k);
+          for (int l = 0; l < gemstones.size() / 3; l++) {
+            if (x == gemstones[l * 3] && y == gemstones[l * 3 + 1] && z == gemstones[l * 3 + 2]) {
+              blocked = true;
+              break;
+            }
+          }
+          if (blocked) break;
+        }
+        
+        if (blocked) {
+          weight = INFINITY;
+          weightChart.push_back(weight);
+          continue;
+        }
 
         //Calculate weight
         int xdiff = abs(path[path.size() - 3] - padCoords[j]);
