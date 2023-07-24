@@ -63,6 +63,7 @@ int main() {
       for (int j = 0; j < padCoords.size() / 3; j++) {
         float weight = 0;
         //Calculate LOS, if blocked, weight = INFINITY
+        //Trim gemstones to only those near the points first somehow?
         int headx = path[path.size() - 3];
         int heady = path[path.size() - 2] + 2;
         int headz = path[path.size() - 1];
@@ -86,7 +87,7 @@ int main() {
           }
           if (blocked) break;
         }
-        
+
         if (blocked) {
           weight = INFINITY;
           weightChart.push_back(weight);
