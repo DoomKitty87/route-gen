@@ -180,6 +180,8 @@ int main() {
   }
   padPositions = rotatedPads;
   vector<int> viablePads;
+  ofstream viablePadsFile;
+  viablePadsFile.open("viablepads.txt");
   for (int i = 0; i < veinTypes.size() / 2; i++) {
     for (int j = 0; j < blocks.size(); j++) {
       if (j % 3 != 0) continue;
@@ -224,15 +226,16 @@ int main() {
       viablePads.push_back(y + padPositions[i][1]);
       viablePads.push_back(z + padPositions[i][2]);
       cout << "Found viable etherwarp pad at " << x + padPositions[i][0] << ", " << y + padPositions[i][1] << ", " << z + padPositions[i][2] << endl;
+      viablePadsFile << x + padPositions[i][0] << " " << y + padPositions[i][1] << " " << z + padPositions[i][2] << endl;
     }
   }
 
   cout << viablePads.size() / 3 << " viable tp pads found." << endl;
-  ofstream viablePadsFile;
-  viablePadsFile.open("viablepads.txt");
-  for (int i = 0; i < viablePads.size() / 3; i++) {
-    viablePadsFile << viablePads[i] << " " << viablePads[i + 1] << " " << viablePads[i + 2] << endl;
-  }
+  //ofstream viablePadsFile;
+  //viablePadsFile.open("viablepads.txt");
+  //for (int i = 0; i < viablePads.size() / 3; i++) {
+  //  viablePadsFile << viablePads[i] << " " << viablePads[i + 1] << " " << viablePads[i + 2] << endl;
+  //}
   viablePadsFile.close();
 }
 /*
