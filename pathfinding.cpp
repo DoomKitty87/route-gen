@@ -17,6 +17,7 @@ int main() {
     padCoords.push_back(z);
   }
   padFile.close();
+  cout << "Loaded " << padCoords.size() / 3 << " pads." << endl;
 
   vector<int> gemstones;
 
@@ -43,10 +44,11 @@ int main() {
 
   int desiredPathLength = 170;
 
-  int lowestAvgDist = INFINITY;
+  float lowestAvgDist = INFINITY;
   vector<int> lowestAvgDistPath;
 
   for (int i = 0; i < padCoords.size() / 3; i++) {
+    cout << "Starting from pad " << i + 1 << endl;
     //Main loop
     //Start of path
     vector<int> path;
@@ -59,11 +61,13 @@ int main() {
 
     //Below should be run for every pad in the path
     while (!done) {
+      //cout << "Adding new pad to path." << endl;
       vector<float> weightChart;
       for (int j = 0; j < padCoords.size() / 3; j++) {
         float weight = 0;
         //Calculate LOS, if blocked, weight = INFINITY
         //Trim gemstones to only those near the points first somehow?
+        /*
         int headx = path[path.size() - 3];
         int heady = path[path.size() - 2] + 2;
         int headz = path[path.size() - 1];
@@ -93,6 +97,7 @@ int main() {
           weightChart.push_back(weight);
           continue;
         }
+        */
 
         //Calculate weight
         int xdiff = abs(path[path.size() - 3] - padCoords[j]);
@@ -103,33 +108,56 @@ int main() {
         int startdiffy = abs(path[1] - padCoords[j + 1]);
         int startdiffz = abs(path[2] - padCoords[j + 2]);
         int startdist = startdiffx + startdiffy + startdiffz;
-        weight = pow(dist, 3) + ((path.size() / 3) / float(desiredPathLength)) * startdist;
+        weight = pow(dist, 3) + ((path.size() / 3) / float(desiredPathLength)) * pow(startdist, -5);
         weightChart.push_back(weight);
+        //std::cout << weight << endl;
       }
-      int lowestIndex = 0;
+      int lowestIndex = -1;
       float lowestWeight = INFINITY;
+      //cout << weightChart.size() << endl;
       for (int j = 0; j < weightChart.size(); j++) {
+        //cout << "Sorting weightChart." << endl;
         if (j == i) continue;
-        for (int k = 0; k < path.size() / 3; k++) {
-          if (j == usedPads[k]) continue;
+        for (int k = 0; k < usedPads.size(); k++) {
+          //cout << "Checking for used pads." << endl;
+          if (j == usedPads[k]) {
+            //cout << "Pad " << j << " already used." << endl;
+            weightChart[j] = INFINITY;
+            break;
+          }
         }
         if (weightChart[j] < lowestWeight) {
           lowestWeight = weightChart[j];
           lowestIndex = j;
         }
       }
+      //cout << "Done analyzing weights." << endl;
       if (lowestWeight == INFINITY) {
         //No path
+        cout << "No path found." << endl;
+        break;
+      }
+      if (lowestIndex == i) {
+        //Path complete
+        cout << "Path complete." << endl;
+        done = true;
         break;
       }
       //Add lowestIndex to path
-      path.push_back(padCoords[lowestIndex]);
-      path.push_back(padCoords[lowestIndex + 1]);
-      path.push_back(padCoords[lowestIndex + 2]);
+      path.push_back(padCoords[lowestIndex * 3]);
+      path.push_back(padCoords[lowestIndex * 3 + 1]);
+      path.push_back(padCoords[lowestIndex * 3 + 2]);
       usedPads.push_back(lowestIndex);
     }
+    string pathOutputTmp = "[";
+    for (int j = 0; j < path.size() / 3; j++) {
+      pathOutputTmp += "{\"x\":" + to_string(path[j * 3]) + ",\"y\":" + to_string(path[j * 3 + 1]) + ",\"z\":" + to_string(path[j * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":" + to_string(j + 1) + "}}";
+      if (j != path.size() / 3 - 1) pathOutputTmp += ",";
+    }
+    pathOutputTmp += "]";
+    cout << pathOutputTmp << endl;
     //Determine average tp distance for path, and store it if it's the lowest yet
-    int avgDist;
+    float avgDist;
     for (int j = 0; j < path.size() / 3; j++) {
       avgDist += abs(path[j * 3] - path[j * 3 + 3]) + abs(path[j * 3 + 1] - path[j * 3 + 4]) + abs(path[j * 3 + 2] - path[j * 3 + 5]);
     }
@@ -141,14 +169,14 @@ int main() {
   }
   string pathOutput = "[";
   for (int i = 0; i < lowestAvgDistPath.size() / 3; i++) {
-    pathOutput += "{\"x\":" + to_string(lowestAvgDistPath[i * 3]) + ",\"y\":" + to_string(lowestAvgDistPath[i * 3 + 1]) + ",\"z\":" + to_string(lowestAvgDistPath[i * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":" + to_string(i) + "}}";
+    pathOutput += "{\"x\":" + to_string(lowestAvgDistPath[i * 3]) + ",\"y\":" + to_string(lowestAvgDistPath[i * 3 + 1]) + ",\"z\":" + to_string(lowestAvgDistPath[i * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":" + to_string(i + 1) + "}}";
     if (i != lowestAvgDistPath.size() / 3 - 1) pathOutput += ",";
   }
   pathOutput += "]";
 
-  std::cout << "Lowest average distance: " << lowestAvgDist << endl;
-  std::cout << "Path: " << endl;
-  std::cout << pathOutput << endl;
+  cout << "Lowest average distance: " << lowestAvgDist << endl;
+  cout << "Path: " << endl;
+  cout << pathOutput << endl;
 }
 
 /*
