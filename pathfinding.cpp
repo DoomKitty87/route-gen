@@ -137,6 +137,33 @@ int main() {
           }
         }
         if (weightChart[j] < lowestWeight) {
+          int headx = path[path.size() - 3];
+          int heady = path[path.size() - 2] + 2;
+          int headz = path[path.size() - 1];
+          int tailx = padCoords[j * 3];
+          int taily = padCoords[j * 3 + 1];
+          int tailz = padCoords[j * 3 + 2];
+          bool blocked = false;
+          int xdist = tailx - headx;
+          int ydist = taily - heady;
+          int zdist = tailz - headz;
+          int interval = floor(abs(xdist) + abs(ydist) + abs(zdist));
+          for (int k = 0; k < interval; k++) {
+            int x = round(headx + (float(xdist) / interval) * k);
+            int y = round(heady + (float(ydist) / interval) * k);
+            int z = round(headz + (float(zdist) / interval) * k);
+            for (int l = 0; l < gemstones.size() / 3; l++) {
+              if (x == gemstones[l * 3] && y == gemstones[l * 3 + 1] && z == gemstones[l * 3 + 2]) {
+                blocked = true;
+                break;
+              }
+            }
+            if (blocked) break;
+          }
+
+          if (blocked) {
+            continue;
+          }
           lowestWeight = weightChart[j];
           lowestIndex = j;
         }
