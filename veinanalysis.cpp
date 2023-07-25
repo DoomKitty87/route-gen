@@ -106,11 +106,10 @@ int main() {
     vector<int> rotatedPanes2;
     vector<int> rotatedPanes3;
     vector<int> rotatedPanes4;
-    for (int j = 0; j < veinTypes[i].size(); j++) {
-      if (j % 3 != 0) continue;
-      int x = veinTypes[i][j];
-      int y = veinTypes[i][j + 1];
-      int z = veinTypes[i][j + 2];
+    for (int j = 0; j < veinTypes[i * 2].size() / 3; j++) {
+      int x = veinTypes[i * 2][j * 3];
+      int y = veinTypes[i * 2][j * 3 + 1];
+      int z = veinTypes[i * 2][j * 3 + 2];
       rotatedBlocks1.push_back(x);
       rotatedBlocks1.push_back(y);
       rotatedBlocks1.push_back(z);
@@ -124,11 +123,10 @@ int main() {
       rotatedBlocks4.push_back(y);
       rotatedBlocks4.push_back(x);
     }
-    for (int j = 0; j < veinTypes[i + 1].size(); j++) {
-      if (j % 3 != 0) continue;
-      int x = veinTypes[i + 1][j];
-      int y = veinTypes[i + 1][j + 1];
-      int z = veinTypes[i + 1][j + 2];
+    for (int j = 0; j < veinTypes[i * 2 + 1].size() / 3; j++) {
+      int x = veinTypes[i * 2 + 1][j * 3];
+      int y = veinTypes[i * 2 + 1][j * 3 + 1];
+      int z = veinTypes[i * 2 + 1][j * 3 + 2];
       rotatedPanes1.push_back(x);
       rotatedPanes1.push_back(y);
       rotatedPanes1.push_back(z);
@@ -183,21 +181,19 @@ int main() {
   ofstream viablePadsFile;
   viablePadsFile.open("viablepads.txt");
   for (int i = 0; i < veinTypes.size() / 2; i++) {
-    for (int j = 0; j < blocks.size(); j++) {
-      if (j % 3 != 0) continue;
+    for (int j = 0; j < blocks.size() / 3; j++) {
       int x = blocks[j * 3];
       int y = blocks[j * 3 + 1];
       int z = blocks[j * 3 + 2];
       bool found = false;
       //Checking Blocks
-      for (int k = 0; k < veinTypes[i].size() / 3; k++) {
+      for (int k = 0; k < veinTypes[i * 2].size() / 3; k++) {
         found = false;
-        for (int l = 0; l < blocks.size(); l++) {
-          if (l % 3 != 0) continue;
+        for (int l = 0; l < blocks.size() / 3; l++) {
           int x2 = blocks[l * 3];
           int y2 = blocks[l * 3 + 1];
           int z2 = blocks[l * 3 + 2];
-          if (x2 == x + veinTypes[i][k * 3] && y2 == y + veinTypes[i][k * 3 + 1] && z2 == z + veinTypes[i][k * 3 + 2]) {
+          if (x2 == x + veinTypes[i * 2][k * 3] && y2 == y + veinTypes[i * 2][k * 3 + 1] && z2 == z + veinTypes[i * 2][k * 3 + 2]) {
             found = true;
             break;
           }
@@ -207,14 +203,13 @@ int main() {
       if (!found) continue;
 
       //Checking Panes
-      for (int k = 0; k < veinTypes[i + 1].size() / 3; k++) {
+      for (int k = 0; k < veinTypes[i * 2 + 1].size() / 3; k++) {
         found = false;
-        for (int l = 0; l < panes.size(); l++) {
-          if (l % 3 != 0) continue;
+        for (int l = 0; l < panes.size() / 3; l++) {
           int x2 = panes[l * 3];
           int y2 = panes[l * 3 + 1];
           int z2 = panes[l * 3 + 2];
-          if (x2 == x + veinTypes[i + 1][k * 3] && y2 == y + veinTypes[i + 1][k * 3 + 1] && z2 == z + veinTypes[i + 1][k * 3 + 2]) {
+          if (x2 == x + veinTypes[i * 2 + 1][k * 3] && y2 == y + veinTypes[i * 2 + 1][k * 3 + 1] && z2 == z + veinTypes[i * 2 + 1][k * 3 + 2]) {
             found = true;
             break;
           }

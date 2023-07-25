@@ -19,8 +19,8 @@ for f in files:
     regioncoords = f.split(".")
     for cx in range(32):
       for cz in range(32):
-        xchunk = cx + int(regioncoords[1])
-        zchunk = cz + int(regioncoords[2])
+        xchunk = cx + int(regioncoords[1]) * 32
+        zchunk = cz + int(regioncoords[2]) * 32
         chunk = region.get_chunk(xchunk, zchunk)
         if chunk == anvil.EmptyChunk(xchunk, zchunk): continue
         for x in range(16):

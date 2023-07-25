@@ -53,9 +53,9 @@ int main() {
     //Main loop
     //Start of path
     vector<int> path;
-    path.push_back(padCoords[i]);
-    path.push_back(padCoords[i + 1]);
-    path.push_back(padCoords[i + 2]);
+    path.push_back(padCoords[i * 3]);
+    path.push_back(padCoords[i * 3 + 1]);
+    path.push_back(padCoords[i * 3 + 2]);
 
     vector<int> usedPads;
     bool done = false;
@@ -68,6 +68,7 @@ int main() {
         float weight = 0;
         //Calculate LOS, if blocked, weight = INFINITY
         //Trim gemstones to only those near the points first somehow?
+        //New solution: only check los on the lowest weight path, if blocked, move to second lowest, etc.
         /*
         int headx = path[path.size() - 3];
         int heady = path[path.size() - 2] + 2;
@@ -161,11 +162,11 @@ int main() {
     cout << pathOutputTmp << endl;
     //Determine average tp distance for path, and store it if it's the lowest yet
     float avgDist;
-    for (int j = 0; j < path.size() / 3; j++) {
-      avgDist += abs(path[j * 3] - path[j * 3 + 3]) + abs(path[j * 3 + 1] - path[j * 3 + 4]) + abs(path[j * 3 + 2] - path[j * 3 + 5]);
+    for (int j = 0; j < path.size() / 3 - 1; j++) {
+      avgDist += abs(path[j * 3] - path[j * 3 + 3]) + abs(path[j * 3 + 1] + 2 - path[j * 3 + 4]) + abs(path[j * 3 + 2] - path[j * 3 + 5]);
     }
-    avgDist /= path.size() / 3;
-    if (avgDist < lowestAvgDist) {
+    avgDist /= path.size() / 3 + 1;
+    if (avgDist < lowestAvgDist && desiredPathLength - float(desiredPathLength) / 10 <= path.size() / 3 && path.size() / 3 <= desiredPathLength + float(desiredPathLength) / 10) {
       lowestAvgDist = avgDist;
       lowestAvgDistPath = path;
     }
