@@ -9,7 +9,7 @@ int main() {
   vector<int> padCoords;
   //Loading etherwarp pad coordinates
   ifstream padFile;
-  padFile.open("viablepads.txt");
+  padFile.open("viablepadsfull.txt");
   int x, y, z;
   while (padFile >> x >> y >> z) {
     cout << x << " " << y << " " << z << endl;
@@ -141,6 +141,7 @@ int main() {
           lowestIndex = j;
         }
       }
+      /*
       bool blocked = true;
       while (blocked) {
         int headx = path[path.size() - 3];
@@ -180,6 +181,7 @@ int main() {
           }
         }
       }
+      */
       //cout << "Done analyzing weights." << endl;
       if (lowestWeight == INFINITY) {
         //No path
