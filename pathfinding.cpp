@@ -111,8 +111,9 @@ int main() {
         int startdiffz = abs(path[2] - padCoords[j * 3 + 2]);
         int startdist = startdiffx + startdiffy + startdiffz;
         //cout << startdist << " " << dist << endl;
-        weight = pow(dist, 3) * (1 / float(pow(startdist, 0.1 * (float(desiredPathLength) / (usedPads.size() + 1)))));
-        //cout << weight << endl;
+        //Balance so that weights do not hit high or low limit
+        weight = pow(dist, 3) * (1 / float(pow(startdist, 10 * ((usedPads.size() + 1) / float(desiredPathLength)))));
+        cout << weight << endl;
         weightChart.push_back(weight);
         //std::cout << weight << endl;
       }
@@ -165,6 +166,7 @@ int main() {
     for (int j = 0; j < path.size() / 3 - 1; j++) {
       avgDist += abs(path[j * 3] - path[j * 3 + 3]) + abs(path[j * 3 + 1] + 2 - path[j * 3 + 4]) + abs(path[j * 3 + 2] - path[j * 3 + 5]);
     }
+    avgDist += abs(path[path.size() - 3] - path[0]) + abs(path[path.size() - 2] + 2 - path[1]) + abs(path[path.size() - 1] - path[2]);
     avgDist /= path.size() / 3 + 1;
     if (avgDist < lowestAvgDist && desiredPathLength - float(desiredPathLength) / 10 <= path.size() / 3 && path.size() / 3 <= desiredPathLength + float(desiredPathLength) / 10) {
       lowestAvgDist = avgDist;
