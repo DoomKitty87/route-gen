@@ -112,8 +112,8 @@ int main() {
         int startdist = startdiffx + startdiffy + startdiffz;
         //cout << startdist << " " << dist << endl;
         //Balance so that weights do not hit high or low limit
-        weight = pow(dist, 3) * (1 / float(pow(startdist, 10 * ((usedPads.size() + 1) / float(desiredPathLength)))));
-        cout << weight << endl;
+        weight = pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)));
+        //cout << weight << endl;
         weightChart.push_back(weight);
         //std::cout << weight << endl;
       }
@@ -123,6 +123,11 @@ int main() {
       for (int j = 0; j < weightChart.size(); j++) {
         //cout << "Sorting weightChart." << endl;
         //if (j == i) continue;
+        if (padCoords[j * 3] == path[path.size() - 3] && padCoords[j * 3 + 1] == path[path.size() - 2] && padCoords[j * 3 + 2] == path[path.size() - 1]) {
+          //cout << "Pad " << j << " is the same as the last pad." << endl;
+          weightChart[j] = INFINITY;
+          continue;
+        }
         for (int k = 0; k < usedPads.size(); k++) {
           //cout << "Checking for used pads." << endl;
           if (j == usedPads[k]) {
@@ -164,9 +169,11 @@ int main() {
     //Determine average tp distance for path, and store it if it's the lowest yet
     float avgDist;
     for (int j = 0; j < path.size() / 3 - 1; j++) {
-      avgDist += abs(path[j * 3] - path[j * 3 + 3]) + abs(path[j * 3 + 1] + 2 - path[j * 3 + 4]) + abs(path[j * 3 + 2] - path[j * 3 + 5]);
+      //avgDist += abs(path[j * 3] - path[j * 3 + 3]) + abs(path[j * 3 + 1] + 2 - path[j * 3 + 4]) + abs(path[j * 3 + 2] - path[j * 3 + 5]);
+      avgDist += sqrt(pow(path[j * 3] - path[j * 3 + 3], 2) + pow(path[j * 3 + 1] + 2 - path[j * 3 + 4], 2) + pow(path[j * 3 + 2] - path[j * 3 + 5], 2));
     }
-    avgDist += abs(path[path.size() - 3] - path[0]) + abs(path[path.size() - 2] + 2 - path[1]) + abs(path[path.size() - 1] - path[2]);
+    //avgDist += abs(path[path.size() - 3] - path[0]) + abs(path[path.size() - 2] + 2 - path[1]) + abs(path[path.size() - 1] - path[2]);
+    avgDist += sqrt(pow(path[path.size() - 3] - path[0], 2) + pow(path[path.size() - 2] + 2 - path[1], 2) + pow(path[path.size() - 1] - path[2], 2));
     avgDist /= path.size() / 3 + 1;
     if (avgDist < lowestAvgDist && desiredPathLength - float(desiredPathLength) / 10 <= path.size() / 3 && path.size() / 3 <= desiredPathLength + float(desiredPathLength) / 10) {
       lowestAvgDist = avgDist;
