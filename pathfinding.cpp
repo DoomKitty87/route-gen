@@ -9,7 +9,7 @@ int main() {
   vector<int> padCoords;
   //Loading etherwarp pad coordinates
   ifstream padFile;
-  padFile.open("viablepads.txt");
+  padFile.open("viablepads46dens.txt");
   int x, y, z;
   while (padFile >> x >> y >> z) {
     cout << x << " " << y << " " << z << endl;
@@ -122,7 +122,7 @@ int main() {
       //cout << weightChart.size() << endl;
       for (int j = 0; j < weightChart.size(); j++) {
         //cout << "Sorting weightChart." << endl;
-        //if (j == i) continue;
+        if (j == i && path.size() == 6) continue;
         if (padCoords[j * 3] == path[path.size() - 3] && padCoords[j * 3 + 1] == path[path.size() - 2] && padCoords[j * 3 + 2] == path[path.size() - 1]) {
           //cout << "Pad " << j << " is the same as the last pad." << endl;
           weightChart[j] = INFINITY;
@@ -137,6 +137,7 @@ int main() {
           }
         }
         if (weightChart[j] < lowestWeight) {
+          /*
           int headx = path[path.size() - 3];
           int heady = path[path.size() - 2] + 2;
           int headz = path[path.size() - 1];
@@ -164,6 +165,7 @@ int main() {
           if (blocked) {
             continue;
           }
+          */
           lowestWeight = weightChart[j];
           lowestIndex = j;
         }
