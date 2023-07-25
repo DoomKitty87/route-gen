@@ -200,6 +200,7 @@ int main() {
       path.push_back(padCoords[lowestIndex * 3 + 2]);
       usedPads.push_back(lowestIndex);
     }
+    /*
     string pathOutputTmp = "[";
     for (int j = 0; j < path.size() / 3; j++) {
       pathOutputTmp += "{\"x\":" + to_string(path[j * 3]) + ",\"y\":" + to_string(path[j * 3 + 1]) + ",\"z\":" + to_string(path[j * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":\"" + to_string(j + 1) + "\"}}";
@@ -207,6 +208,7 @@ int main() {
     }
     pathOutputTmp += "]";
     cout << pathOutputTmp << endl;
+    */
     //Determine average tp distance for path, and store it if it's the lowest yet
     float avgDist;
     for (int j = 0; j < path.size() / 3 - 1; j++) {
