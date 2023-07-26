@@ -9,7 +9,7 @@ int main() {
   vector<int> overallPads;
   //Loading etherwarp pad coordinates
   ifstream padFile;
-  padFile.open("viablepads56fixed.txt");
+  padFile.open("padsfullfixed.txt");
   int x, y, z;
   while (padFile >> x >> y >> z) {
     cout << x << " " << y << " " << z << endl;
@@ -21,29 +21,37 @@ int main() {
   cout << "Loaded " << overallPads.size() / 3 << " pads." << endl;
 
   vector<int> gemstones;
+  vector<int> panes;
+  vector<int> blocks;
 
   //Loading gemstone coordinates
   ifstream blockFile;
   ifstream paneFile;
 
-  blockFile.open("blocks.txt");
-  paneFile.open("panes.txt");
+  blockFile.open("blocksfinal.txt");
+  paneFile.open("panesfinal.txt");
 
   int blockx, blocky, blockz;
   while (blockFile >> blockx >> blocky >> blockz) {
     gemstones.push_back(blockx);
     gemstones.push_back(blocky);
     gemstones.push_back(blockz);
+    blocks.push_back(blockx);
+    blocks.push_back(blocky);
+    blocks.push_back(blockz);
   }
   blockFile.close();
   while (paneFile >> blockx >> blocky >> blockz) {
     gemstones.push_back(blockx);
     gemstones.push_back(blocky);
     gemstones.push_back(blockz);
+    panes.push_back(blockx);
+    panes.push_back(blocky);
+    panes.push_back(blockz);
   }
   paneFile.close();
 
-  int desiredPathLength = 55;
+  int desiredPathLength = 170;
 
   int jadecoordsx = 823;
   int jadecoordsz = 202;
@@ -107,7 +115,25 @@ int main() {
           int startdist = startdiffx + startdiffy + startdiffz;
           //cout << startdist << " " << dist << endl;
           //Balance so that weights do not hit high or low limit
-          weight = pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)));
+          int gemDensity = 0;
+          for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 5; y++) {
+              for (int z = 0; z < 3; z++) {
+                for (int k = 0; k < blocks.size() / 3; k++) {
+                  if (blocks[k * 3] == padCoords[j * 3] + x - 1 && blocks[k * 3 + 1] == padCoords[j * 3 + 1] + y + 1 && blocks[k * 3 + 2] == padCoords[j * 3 + 2] + z - 1) {
+                    gemDensity += 3;
+                  }
+                }
+                for (int k = 0; k < panes.size() / 3; k++) {
+                  if (panes[k * 3] == padCoords[j * 3] + x - 1 && panes[k * 3 + 1] == padCoords[j * 3 + 1] + y + 1 && panes[k * 3 + 2] == padCoords[j * 3 + 2] + z - 1) {
+                    gemDensity += 2;
+                  }
+                }
+              }
+            }
+          }
+          //cout << gemDensity << endl;
+          weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / (gemDensity + 1);
           //cout << weight << endl;
           weightChart.push_back(weight);
           //std::cout << weight << endl;
