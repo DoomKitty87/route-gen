@@ -38,7 +38,7 @@ int main() {
     cout << i << endl;
     int gemDensity = 0;
     for (int x = 0; x < 3; x++) {
-      for (int y = 0; y < 5; y++) {
+      for (int y = 0; y < 4; y++) {
         for (int z = 0; z < 3; z++) {
           for (int k = 0; k < blocks.size() / 3; k++) {
             if (blocks[k * 3] == padCoords[i * 3] + x - 1 && blocks[k * 3 + 1] == padCoords[i * 3 + 1] + y + 1 && blocks[k * 3 + 2] == padCoords[i * 3 + 2] + z - 1) {

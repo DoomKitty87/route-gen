@@ -58,9 +58,9 @@ int main() {
   }
   paneFile.close();
 
-  int desiredPathLength = 170;
+  int desiredPathLength = 150;
 
-  int jadecoordsx = 823;
+  int jadecoordsx = 824;
   int jadecoordsz = 202;
 
   vector<vector<int> > sectors;
@@ -85,11 +85,13 @@ int main() {
   float highestDensDist;
   int highestDensSector = -1;
 
+  int allowedOOB = 6;
+
   for (int sec = 0; sec < 25; sec++) {
     vector<int> padCoords;
     vector<int> secDensities;
     for (int i = 0; i < overallPads.size() / 3; i++) {
-      if (overallPads[i * 3] <= sectors[sec / 5][0] && overallPads[i * 3] >= sectors[sec / 5][2] && overallPads[i * 3 + 2] >= sectors[sec % 5][1] && overallPads[i * 3 + 2] <= sectors[sec % 5][3]) {
+      if (overallPads[i * 3] <= sectors[sec / 5][0] + allowedOOB && overallPads[i * 3] >= sectors[sec / 5][2] - allowedOOB && overallPads[i * 3 + 2] >= sectors[sec % 5][1] - allowedOOB && overallPads[i * 3 + 2] <= sectors[sec % 5][3] + allowedOOB) {
         padCoords.push_back(overallPads[i * 3]);
         padCoords.push_back(overallPads[i * 3 + 1]);
         padCoords.push_back(overallPads[i * 3 + 2]);
@@ -105,7 +107,7 @@ int main() {
     float highestDensityDist;
 
     for (int i = 0; i < padCoords.size() / 3; i++) {
-      cout << "Starting from pad " << i + 1 << endl;
+      //cout << "Starting from pad " << i + 1 << endl;
       //Main loop
       //Start of path
       vector<int> path;
@@ -210,12 +212,12 @@ int main() {
         //cout << "Done analyzing weights." << endl;
         if (lowestWeight == INFINITY) {
           //No path
-          cout << "No path found." << endl;
+          //cout << "No path found." << endl;
           break;
         }
         if (lowestIndex == i) {
           //Path complete
-          cout << "Path complete." << endl;
+          //cout << "Path complete." << endl;
           done = true;
           break;
         }
