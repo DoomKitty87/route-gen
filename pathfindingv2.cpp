@@ -18,6 +18,13 @@ int main() {
     overallPads.push_back(z);
   }
   padFile.close();
+  vector<int> gemDensities;
+  ifstream densityFile;
+  densityFile.open("densitylist.txt");
+  int density;
+  while (densityFile >> density) {
+    gemDensities.push_back(density);
+  }
   cout << "Loaded " << overallPads.size() / 3 << " pads." << endl;
 
   vector<int> gemstones;
@@ -72,19 +79,30 @@ int main() {
   float lowestAvgDst = INFINITY;
   vector<int> lowestAvgDstPath;
   int lowestDstSector = -1;
+  float lowestDstDensity;
+  float highestDens = 0;
+  vector<int> highestDensPath;
+  float highestDensDist;
+  int highestDensSector = -1;
 
   for (int sec = 0; sec < 25; sec++) {
     vector<int> padCoords;
+    vector<int> secDensities;
     for (int i = 0; i < overallPads.size() / 3; i++) {
       if (overallPads[i * 3] <= sectors[sec / 5][0] && overallPads[i * 3] >= sectors[sec / 5][2] && overallPads[i * 3 + 2] >= sectors[sec % 5][1] && overallPads[i * 3 + 2] <= sectors[sec % 5][3]) {
         padCoords.push_back(overallPads[i * 3]);
         padCoords.push_back(overallPads[i * 3 + 1]);
         padCoords.push_back(overallPads[i * 3 + 2]);
+        secDensities.push_back(gemDensities[i]);
       }
     }
     cout << "Loaded " << padCoords.size() / 3 << " pads in sector " << sec + 1 << endl;
     float lowestAvgDist = INFINITY;
+    float lowestAvgDistDensity;
     vector<int> lowestAvgDistPath;
+    float highestDensity = 0;
+    vector<int> highestDensityPath;
+    float highestDensityDist;
 
     for (int i = 0; i < padCoords.size() / 3; i++) {
       cout << "Starting from pad " << i + 1 << endl;
@@ -94,6 +112,8 @@ int main() {
       path.push_back(padCoords[i * 3]);
       path.push_back(padCoords[i * 3 + 1]);
       path.push_back(padCoords[i * 3 + 2]);
+
+      float density = secDensities[i];
 
       vector<int> usedPads;
       bool done = false;
@@ -115,25 +135,9 @@ int main() {
           int startdist = startdiffx + startdiffy + startdiffz;
           //cout << startdist << " " << dist << endl;
           //Balance so that weights do not hit high or low limit
-          int gemDensity = 0;
-          for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 5; y++) {
-              for (int z = 0; z < 3; z++) {
-                for (int k = 0; k < blocks.size() / 3; k++) {
-                  if (blocks[k * 3] == padCoords[j * 3] + x - 1 && blocks[k * 3 + 1] == padCoords[j * 3 + 1] + y + 1 && blocks[k * 3 + 2] == padCoords[j * 3 + 2] + z - 1) {
-                    gemDensity += 3;
-                  }
-                }
-                for (int k = 0; k < panes.size() / 3; k++) {
-                  if (panes[k * 3] == padCoords[j * 3] + x - 1 && panes[k * 3 + 1] == padCoords[j * 3 + 1] + y + 1 && panes[k * 3 + 2] == padCoords[j * 3 + 2] + z - 1) {
-                    gemDensity += 2;
-                  }
-                }
-              }
-            }
-          }
+          int gemDensity = secDensities[j];
           //cout << gemDensity << endl;
-          weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / (gemDensity + 1);
+          weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / (gemDensity * 3);
           //cout << weight << endl;
           weightChart.push_back(weight);
           //std::cout << weight << endl;
@@ -220,6 +224,7 @@ int main() {
         path.push_back(padCoords[lowestIndex * 3 + 1]);
         path.push_back(padCoords[lowestIndex * 3 + 2]);
         usedPads.push_back(lowestIndex);
+        density += secDensities[lowestIndex];
       }
       /*
       string pathOutputTmp = "[";
@@ -239,9 +244,16 @@ int main() {
       //avgDist += abs(path[path.size() - 3] - path[0]) + abs(path[path.size() - 2] + 2 - path[1]) + abs(path[path.size() - 1] - path[2]);
       avgDist += sqrt(pow(path[path.size() - 3] - path[0], 2) + pow(path[path.size() - 2] + 2 - path[1], 2) + pow(path[path.size() - 1] - path[2], 2));
       avgDist /= path.size() / 3 + 1;
+      density /= float(path.size()) / 3;
       if (avgDist < lowestAvgDist && desiredPathLength - float(desiredPathLength) / 10 <= path.size() / 3 && path.size() / 3 <= desiredPathLength + float(desiredPathLength) / 10) {
         lowestAvgDist = avgDist;
         lowestAvgDistPath = path;
+        lowestAvgDistDensity = density;
+      }
+      if (density > highestDensity && desiredPathLength - float(desiredPathLength) / 10 <= path.size() / 3 && path.size() / 3 <= desiredPathLength + float(desiredPathLength) / 10) {
+        highestDensity = density;
+        highestDensityPath = path;
+        highestDensityDist = avgDist;
       }
     }
     string pathOutput = "[";
@@ -252,13 +264,31 @@ int main() {
     pathOutput += "]";
 
     cout << "Lowest average distance: " << lowestAvgDist << endl;
+    cout << "Density: " << lowestAvgDistDensity << endl;
     cout << "Path: " << endl;
+    cout << pathOutput << endl;
+    cout << "Highest average density: " << highestDensity << endl;
+    cout << "Distance: " << highestDensityDist << endl;
+    cout << "Path: " << endl;
+    pathOutput = "[";
+    for (int i = 0; i < highestDensityPath.size() / 3; i++) {
+      pathOutput += "{\"x\":" + to_string(highestDensityPath[i * 3]) + ",\"y\":" + to_string(highestDensityPath[i * 3 + 1]) + ",\"z\":" + to_string(highestDensityPath[i * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":\"" + to_string(i + 1) + "\"}}";
+      if (i != highestDensityPath.size() / 3 - 1) pathOutput += ",";
+    }
+    pathOutput += "]";
     cout << pathOutput << endl;
 
     if (lowestAvgDist < lowestAvgDst) {
       lowestAvgDst = lowestAvgDist;
       lowestAvgDstPath = lowestAvgDistPath;
       lowestDstSector = sec;
+      lowestDstDensity = lowestAvgDistDensity;
+    }
+    if (highestDensity > highestDens) {
+      highestDens = highestDensity;
+      highestDensPath = highestDensityPath;
+      highestDensSector = sec;
+      highestDensDist = highestDensityDist;
     }
   }
   string pathOutput = "[";
@@ -268,7 +298,19 @@ int main() {
   }
   pathOutput += "]";
   cout << "Lowest average distance: " << lowestAvgDst << endl;
+  cout << "Density: " << lowestDstDensity << endl;
   cout << "Path: " << endl;
   cout << pathOutput << endl;
   cout << "Sector: " << lowestDstSector + 1 << endl;
+  pathOutput = "[";
+  for (int i = 0; i < highestDensPath.size() / 3; i++) {
+    pathOutput += "{\"x\":" + to_string(highestDensPath[i * 3]) + ",\"y\":" + to_string(highestDensPath[i * 3 + 1]) + ",\"z\":" + to_string(highestDensPath[i * 3 + 2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":\"" + to_string(i + 1) + "\"}}";
+    if (i != highestDensPath.size() / 3 - 1) pathOutput += ",";
+  }
+  pathOutput += "]";
+  cout << "Highest average density: " << highestDens << endl;
+  cout << "Distance: " << highestDensDist << endl;
+  cout << "Path: " << endl;
+  cout << pathOutput << endl;
+  cout << "Sector: " << highestDensSector + 1 << endl;
 }
