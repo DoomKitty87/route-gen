@@ -9,8 +9,8 @@ int main() {
   ifstream blockFile;
   ifstream paneFile;
 
-  blockFile.open("blocks.txt");
-  paneFile.open("panes.txt");
+  blockFile.open("blocksfinal.txt");
+  paneFile.open("panesfinal.txt");
 
   vector<int> blocks;
   vector<int> panes;
@@ -179,7 +179,7 @@ int main() {
   padPositions = rotatedPads;
   vector<int> viablePads;
   ofstream viablePadsFile;
-  viablePadsFile.open("viablepads.txt");
+  viablePadsFile.open("viablepadsfixed.txt");
   for (int i = 0; i < veinTypes.size() / 2; i++) {
     for (int j = 0; j < blocks.size() / 3; j++) {
       int x = blocks[j * 3];
