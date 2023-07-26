@@ -1,25 +1,26 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <omp.h>
 using namespace std;
 
 int main() {
+  omp_set_num_threads(4);
   ifstream blockFile("blocksfinal.txt");
   ifstream paneFile("panesfinal.txt");
 
-  vector<int> blocks;
-  vector<int> panes;
-
+  vector<int> mainBlocks;
+  vector<int> mainPanes;
   int x, y, z;
   while (blockFile >> x >> y >> z) {
-    blocks.push_back(x);
-    blocks.push_back(y);
-    blocks.push_back(z);
+    mainBlocks.push_back(x);
+    mainBlocks.push_back(y);
+    mainBlocks.push_back(z);
   }
   while (paneFile >> x >> y >> z) {
-    panes.push_back(x);
-    panes.push_back(y);
-    panes.push_back(z);
+    mainPanes.push_back(x);
+    mainPanes.push_back(y);
+    mainPanes.push_back(z);
   }
   blockFile.close();
   paneFile.close();
@@ -30,7 +31,7 @@ int main() {
   int jadecoordsx = 824;
   int jadecoordsz = 202;
 
-  vector<vector<int> > sectors;
+  vector<vector<int> > mainSectors;
   for (int i = 0; i < 5; i++) {
     for (int j = 0; j < 5; j++) {
       vector<int> sector;
@@ -40,13 +41,25 @@ int main() {
       sector.push_back(cornerz);
       sector.push_back(cornerx - 128);
       sector.push_back(cornerz + 128);
-      sectors.push_back(sector);
+      mainSectors.push_back(sector);
     }
   }
-
+  #pragma omp parallel for schedule(dynamic, 1) shared(padCoords, densityList)
   for (int sec = 0; sec < 25; sec++) {
+    vector<int> blocks;
+    vector<int> panes;
+    vector<vector<int> > sectors;
+    #pragma omp critical
+    {
+      cout << "Starting sector " << sec << endl;
+      blocks = mainBlocks;
+      panes = mainPanes;
+      sectors = mainSectors;
+    }
     vector<int> secBlocks;
     vector<int> secPanes;
+    vector<int> secCoords;
+    vector<int> secDens;
     for (int i = 0; i < blocks.size() / 3; i++) {
       if (blocks[i * 3] <= sectors[sec / 5][0] && blocks[i * 3] >= sectors[sec / 5][2] && blocks[i * 3 + 2] >= sectors[sec % 5][1] && blocks[i * 3 + 2] <= sectors[sec % 5][3]) {
         secBlocks.push_back(blocks[i * 3]);
@@ -61,6 +74,8 @@ int main() {
         secPanes.push_back(blocks[i * 3 + 2]);
       }
     }
+    #pragma omp critical
+      cout << "Loaded sector " << sec << " blocks." << endl;
     for (int x = sectors[sec / 5][0] - 1; x > sectors[sec / 5][2]; x--) {
       for (int z = sectors[sec % 5][1] + 1; z < sectors[sec % 5][3]; z++) {
         for (int y = 31; y < 187; y++) {
@@ -70,6 +85,7 @@ int main() {
           for (int x2 = 0; x2 < 3; x2++) {
             for (int y2 = 0; y2 < 5; y2++) {
               for (int z2 = 0; z2 < 3; z2++) {
+                if ((y2 == 0 && x2 == 1 && z2 == 1) || (y2 == 1 && x2 == 1 && z2 == 1)) continue;
                 for (int i = 0; i < secBlocks.size() / 3; i++) {
                   if (secBlocks[i * 3] == x + x2 - 1 && secBlocks[i * 3 + 1] == y + y2 && secBlocks[i * 3 + 2] == z + z2 - 1) {
                     density += 3;
@@ -84,14 +100,20 @@ int main() {
             }
           }
           if (density > 40) {
-            padCoords.push_back(x);
-            padCoords.push_back(y);
-            padCoords.push_back(z);
-            densityList.push_back(density);
-            cout << x << " " << y << " " << z << " " << density << endl;
+            secCoords.push_back(x);
+            secCoords.push_back(y);
+            secCoords.push_back(z);
+            secDens.push_back(density);
+            #pragma omp critical
+              cout << x << " " << y << " " << z << " " << density << endl;
           }
         }
       }
+    }
+    #pragma omp critical
+    {
+    padCoords.insert(padCoords.end(), make_move_iterator(secCoords.begin()), make_move_iterator(secCoords.end()));
+    densityList.insert(densityList.end(), make_move_iterator(secDens.begin()), make_move_iterator(secDens.end()));
     }
   }
   
