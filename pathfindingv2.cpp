@@ -155,6 +155,11 @@ int main() {
             weightChart[j] = INFINITY;
             continue;
           }
+          if (abs(padCoords[j * 3] - path[path.size() - 3]) < 3 && abs(padCoords[j * 3 + 2] - path[path.size() - 1]) < 3) {
+            //cout << "Pad " << j << " is directly above or below-blocking tp." << endl;
+            weightChart[j] = INFINITY;
+            continue;
+          }
           for (int k = 0; k < usedPads.size(); k++) {
             //cout << "Checking for used pads." << endl;
             if (j == usedPads[k]) {
