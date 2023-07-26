@@ -1,7 +1,7 @@
 import anvil
 import json
 
-files = ["r.0.0.mca", "r.0.1.mca", "r.1.0.mca", "r.1.1.mca"]
+files = ["r.0.0.mca2", "r.0.1.mca2", "r.1.0.mca2", "r.1.1.mca2"]
 
 blocksexp = ""
 panesexp = ""
@@ -9,15 +9,16 @@ panesexp = ""
 blocks = []
 panes = []
 
-with open("blocks.txt", "w") as f:
+with open("blocks1.txt", "w") as f:
   f.write("")
-with open("panes.txt", "w") as f:
+with open("panes1.txt", "w") as f:
   f.write("")
 
 for f in files:
     region = anvil.Region.from_file(f)
     regioncoords = f.split(".")
     for cx in range(32):
+      print(len(blocks))
       for cz in range(32):
         xchunk = cx + int(regioncoords[1]) * 32
         zchunk = cz + int(regioncoords[2]) * 32
@@ -53,10 +54,10 @@ for b in blocks:
 for p in panes:
   panesexp += f"{p[0]} {p[1]} {p[2]}\n"
 
-with open("blocks.txt", "w") as f:
+with open("blocks1.txt", "w") as f:
   print(str(blocksexp.count("\n")) + " blocks")
   f.write(blocksexp)
 
-with open("panes.txt", "w") as f:
+with open("panes1.txt", "w") as f:
   print(str(panesexp.count("\n")) + " panes")
   f.write(panesexp)

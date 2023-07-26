@@ -9,7 +9,7 @@ int main() {
   vector<int> padCoords;
   //Loading etherwarp pad coordinates
   ifstream padFile;
-  padFile.open("viablepadsfull.txt");
+  padFile.open("viablepads56dens.txt");
   int x, y, z;
   while (padFile >> x >> y >> z) {
     cout << x << " " << y << " " << z << endl;
