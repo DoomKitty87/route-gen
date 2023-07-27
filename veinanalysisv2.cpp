@@ -51,7 +51,7 @@ int main() {
     vector<vector<int> > sectors;
     #pragma omp critical
     {
-      cout << "Starting sector " << sec << endl;
+      cout << "Starting sector " << sec + 1 << endl;
       blocks = mainBlocks;
       panes = mainPanes;
       sectors = mainSectors;
@@ -61,23 +61,23 @@ int main() {
     vector<int> secCoords;
     vector<int> secDens;
     for (int i = 0; i < blocks.size() / 3; i++) {
-      if (blocks[i * 3] <= sectors[sec][0] && blocks[i * 3] >= sectors[sec][2] && blocks[i * 3 + 2] >= sectors[sec][1] && blocks[i * 3 + 2] <= sectors[sec][3]) {
+      if (blocks[i * 3] < sectors[sec][0] && blocks[i * 3] >= sectors[sec][2] && blocks[i * 3 + 2] > sectors[sec][1] && blocks[i * 3 + 2] <= sectors[sec][3]) {
         secBlocks.push_back(blocks[i * 3]);
         secBlocks.push_back(blocks[i * 3 + 1]);
         secBlocks.push_back(blocks[i * 3 + 2]);
       }
     }
     for (int i = 0; i < panes.size() / 3; i++) {
-      if (panes[i * 3] <= sectors[sec][0] && panes[i * 3] >= sectors[sec][2] && panes[i * 3 + 2] >= sectors[sec][1] && panes[i * 3 + 2] <= sectors[sec][3]) {
+      if (panes[i * 3] < sectors[sec][0] && panes[i * 3] >= sectors[sec][2] && panes[i * 3 + 2] > sectors[sec][1] && panes[i * 3 + 2] <= sectors[sec][3]) {
         secPanes.push_back(blocks[i * 3]);
         secPanes.push_back(blocks[i * 3 + 1]);
         secPanes.push_back(blocks[i * 3 + 2]);
       }
     }
     #pragma omp critical
-      cout << "Loaded sector " << sec << " blocks." << endl;
-    for (int x = sectors[sec / 5][0] - 1; x > sectors[sec / 5][2]; x--) {
-      for (int z = sectors[sec % 5][1] + 1; z < sectors[sec % 5][3]; z++) {
+      cout << "Loaded sector " << sec + 1 << " blocks." << endl;
+    for (int x = sectors[sec][0] - 1; x > sectors[sec][2]; x--) {
+      for (int z = sectors[sec][1] + 1; z < sectors[sec][3]; z++) {
         for (int y = 31; y < 187; y++) {
           for (int i = 0; i < secBlocks.size() / 3; i++) if (secBlocks[i * 3] == x && (secBlocks[i * 3 + 1] == y + 1 || secBlocks[i * 3 + 1] == y + 2) && secBlocks[i * 3 + 2] == z) continue;
           for (int i = 0; i < secPanes.size() / 3; i++) if (secPanes[i * 3] == x && (secPanes[i * 3 + 1] == y + 1 || secPanes[i * 3 + 1] == y + 2) && secPanes[i * 3 + 2] == z) continue;

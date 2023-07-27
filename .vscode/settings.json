@@ -6,6 +6,8 @@
     "cmath": "cpp",
     "cstdlib": "cpp",
     "iostream": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "atomic": "cpp",
+    "memory": "cpp"
   }
 }
