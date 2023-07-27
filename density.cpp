@@ -4,7 +4,7 @@
 using namespace std;
 
 int main() {
-  ifstream padFile("padsfullfixed.txt");
+  ifstream padFile("padstemptest.txt");
   ifstream blockFile("blocksfinal.txt");
   ifstream paneFile("panesfinal.txt");
 
@@ -56,7 +56,7 @@ int main() {
     gemDensities.push_back(gemDensity);
   }
 
-  ofstream densityFile("densitylist.txt");
+  ofstream densityFile("densitylisttesting.txt");
   for (int i = 0; i < gemDensities.size(); i++) {
     densityFile << gemDensities[i] << endl;
   }

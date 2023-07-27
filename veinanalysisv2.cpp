@@ -61,14 +61,14 @@ int main() {
     vector<int> secCoords;
     vector<int> secDens;
     for (int i = 0; i < blocks.size() / 3; i++) {
-      if (blocks[i * 3] <= sectors[sec / 5][0] && blocks[i * 3] >= sectors[sec / 5][2] && blocks[i * 3 + 2] >= sectors[sec % 5][1] && blocks[i * 3 + 2] <= sectors[sec % 5][3]) {
+      if (blocks[i * 3] <= sectors[sec][0] && blocks[i * 3] >= sectors[sec][2] && blocks[i * 3 + 2] >= sectors[sec][1] && blocks[i * 3 + 2] <= sectors[sec][3]) {
         secBlocks.push_back(blocks[i * 3]);
         secBlocks.push_back(blocks[i * 3 + 1]);
         secBlocks.push_back(blocks[i * 3 + 2]);
       }
     }
     for (int i = 0; i < panes.size() / 3; i++) {
-      if (panes[i * 3] <= sectors[sec / 5][0] && panes[i * 3] >= sectors[sec / 5][2] && panes[i * 3 + 2] >= sectors[sec % 5][1] && panes[i * 3 + 2] <= sectors[sec % 5][3]) {
+      if (panes[i * 3] <= sectors[sec][0] && panes[i * 3] >= sectors[sec][2] && panes[i * 3 + 2] >= sectors[sec][1] && panes[i * 3 + 2] <= sectors[sec][3]) {
         secPanes.push_back(blocks[i * 3]);
         secPanes.push_back(blocks[i * 3 + 1]);
         secPanes.push_back(blocks[i * 3 + 2]);

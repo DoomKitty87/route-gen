@@ -9,7 +9,7 @@ int main() {
   vector<int> overallPads;
   //Loading etherwarp pad coordinates
   ifstream padFile;
-  padFile.open("padsfullfixed.txt");
+  padFile.open("padstemptest.txt");
   int x, y, z;
   while (padFile >> x >> y >> z) {
     cout << x << " " << y << " " << z << endl;
@@ -20,7 +20,7 @@ int main() {
   padFile.close();
   vector<int> gemDensities;
   ifstream densityFile;
-  densityFile.open("densitylist.txt");
+  densityFile.open("densitylisttesting.txt");
   int density;
   while (densityFile >> density) {
     gemDensities.push_back(density);
@@ -91,7 +91,7 @@ int main() {
     vector<int> padCoords;
     vector<int> secDensities;
     for (int i = 0; i < overallPads.size() / 3; i++) {
-      if (overallPads[i * 3] <= sectors[sec / 5][0] + allowedOOB && overallPads[i * 3] >= sectors[sec / 5][2] - allowedOOB && overallPads[i * 3 + 2] >= sectors[sec % 5][1] - allowedOOB && overallPads[i * 3 + 2] <= sectors[sec % 5][3] + allowedOOB) {
+      if (overallPads[i * 3] <= sectors[sec][0] + allowedOOB && overallPads[i * 3] >= sectors[sec][2] - allowedOOB && overallPads[i * 3 + 2] >= sectors[sec][1] - allowedOOB && overallPads[i * 3 + 2] <= sectors[sec][3] + allowedOOB) {
         padCoords.push_back(overallPads[i * 3]);
         padCoords.push_back(overallPads[i * 3 + 1]);
         padCoords.push_back(overallPads[i * 3 + 2]);

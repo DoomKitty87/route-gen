@@ -4,7 +4,7 @@
 using namespace std;
 
 int main() {
-  ifstream padFile("padsfullfixed.txt");
+  ifstream padFile("padstemptest.txt");
   ifstream blockFile("blocksfinal.txt");
   ifstream paneFile("panesfinal.txt");
 
@@ -57,14 +57,14 @@ int main() {
     vector<int> secBlocks;
     vector<int> secPanes;
     for (int i = 0; i < blocks.size() / 3; i++) {
-      if (blocks[i * 3] < sectors[sec / 5][0] && blocks[i * 3] >= sectors[sec / 5][2] && blocks[i * 3 + 2] > sectors[sec % 5][1] && blocks[i * 3 + 2] <= sectors[sec % 5][3]) {
+      if (blocks[i * 3] < sectors[sec][0] && blocks[i * 3] >= sectors[sec][2] && blocks[i * 3 + 2] > sectors[sec][1] && blocks[i * 3 + 2] <= sectors[sec][3]) {
         secBlocks.push_back(blocks[i * 3]);
         secBlocks.push_back(blocks[i * 3 + 1]);
         secBlocks.push_back(blocks[i * 3 + 2]);
       }
     }
     for (int i = 0; i < panes.size() / 3; i++) {
-      if (panes[i * 3] < sectors[sec / 5][0] && panes[i * 3] >= sectors[sec / 5][2] && panes[i * 3 + 2] > sectors[sec % 5][1] && panes[i * 3 + 2] <= sectors[sec % 5][3]) {
+      if (panes[i * 3] < sectors[sec][0] && panes[i * 3] >= sectors[sec][2] && panes[i * 3 + 2] > sectors[sec][1] && panes[i * 3 + 2] <= sectors[sec][3]) {
         secPanes.push_back(panes[i * 3]);
         secPanes.push_back(panes[i * 3 + 1]);
         secPanes.push_back(panes[i * 3 + 2]);
@@ -72,7 +72,7 @@ int main() {
     }
     vector<int> padCoords;
     for (int i = 0; i < overallPads.size() / 3; i++) {
-      if (overallPads[i * 3] < sectors[sec / 5][0] && overallPads[i * 3] >= sectors[sec / 5][2] && overallPads[i * 3 + 2] > sectors[sec % 5][1] && overallPads[i * 3 + 2] <= sectors[sec % 5][3]) {
+      if (overallPads[i * 3] < sectors[sec][0] && overallPads[i * 3] >= sectors[sec][2] && overallPads[i * 3 + 2] > sectors[sec][1] && overallPads[i * 3 + 2] <= sectors[sec][3]) {
         padCoords.push_back(overallPads[i * 3]);
         padCoords.push_back(overallPads[i * 3 + 1]);
         padCoords.push_back(overallPads[i * 3 + 2]);
@@ -110,7 +110,7 @@ int main() {
     reorderedPadsFile << newPadOrder[i * 3] << " " << newPadOrder[i * 3 + 1] << " " << newPadOrder[i * 3 + 2] << endl;
   }
   reorderedPadsFile.close();
-  ofstream densityFile("densitylist.txt");
+  ofstream densityFile("densitylisttesting.txt");
   for (int i = 0; i < gemDensities.size(); i++) {
     densityFile << gemDensities[i] << endl;
   }
