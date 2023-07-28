@@ -107,7 +107,7 @@ int main() {
     float highestDensityDist;
 
     for (int i = 0; i < padCoords.size() / 3; i++) {
-      //cout << "Starting from pad " << i + 1 << endl;
+      cout << "Starting from pad " << i + 1 << endl;
       //Main loop
       //Start of path
       vector<int> path;
@@ -167,11 +167,13 @@ int main() {
               weightChart[j] = INFINITY;
               break;
             }
-            if (padCoords[j * 3] - padCoords[usedPads[k] * 3] < 3 && padCoords[j * 3 + 1] - padCoords[usedPads[k] * 3 + 1] < 2 && padCoords[j * 3 + 2] - padCoords[usedPads[k] * 3 + 2] < 3) {
+            /*
+            if (abs(padCoords[j * 3] - padCoords[usedPads[k] * 3]) < 3 && abs(padCoords[j * 3 + 1] - padCoords[usedPads[k] * 3 + 1]) < 2 && abs(padCoords[j * 3 + 2] - padCoords[usedPads[k] * 3 + 2]) < 3) {
               //cout << "Pad " << j << " is too close to a used tp pad." << endl;
               weightChart[j] = INFINITY;
               break;
             }
+            */
           }
           if (weightChart[j] < lowestWeight) {
             lowestWeight = weightChart[j];
@@ -236,6 +238,15 @@ int main() {
         path.push_back(padCoords[lowestIndex * 3 + 1]);
         path.push_back(padCoords[lowestIndex * 3 + 2]);
         usedPads.push_back(lowestIndex);
+        /*
+        for (int j = 0; j < padCoords.size() / 3; j++) {
+          if (j == lowestIndex) continue;
+          for (int k = 0; k < usedPads.size(); k++) if (usedPads[k] == j) continue;
+          if (abs(padCoords[j * 3] - padCoords[lowestIndex * 3]) < 3 && abs(padCoords[j * 3 + 1] - padCoords[lowestIndex * 3 + 1]) < 2 && abs(padCoords[j * 3 + 2] - padCoords[lowestIndex * 3 + 2]) < 3) {
+            usedPads.push_back(j);
+          }
+        }
+        */
         density += secDensities[lowestIndex];
       }
       /*

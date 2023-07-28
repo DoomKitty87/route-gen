@@ -10,6 +10,7 @@
     "atomic": "cpp",
     "memory": "cpp",
     "iosfwd": "cpp",
-    "fstream": "cpp"
+    "fstream": "cpp",
+    "string": "cpp"
   }
 }
