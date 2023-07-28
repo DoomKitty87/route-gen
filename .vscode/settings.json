@@ -9,6 +9,7 @@
     "ostream": "cpp",
     "atomic": "cpp",
     "memory": "cpp",
-    "iosfwd": "cpp"
+    "iosfwd": "cpp",
+    "fstream": "cpp"
   }
 }

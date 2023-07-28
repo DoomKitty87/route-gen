@@ -167,6 +167,11 @@ int main() {
               weightChart[j] = INFINITY;
               break;
             }
+            if (padCoords[j * 3] - padCoords[usedPads[k] * 3] < 3 && padCoords[j * 3 + 1] - padCoords[usedPads[k] * 3 + 1] < 2 && padCoords[j * 3 + 2] - padCoords[usedPads[k] * 3 + 2] < 3) {
+              //cout << "Pad " << j << " is too close to a used tp pad." << endl;
+              weightChart[j] = INFINITY;
+              break;
+            }
           }
           if (weightChart[j] < lowestWeight) {
             lowestWeight = weightChart[j];
