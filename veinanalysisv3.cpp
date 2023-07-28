@@ -35,7 +35,7 @@ int main() {
     cout << x << endl;
     for (int z = 0; z < 622; z++) {
       for (int y = 31; y < 187; y++) {
-        if (blockArray[x][y][z] != 0 || blockArray[x][y][z] != 0) continue;
+        if (blockArray[x][y + 1][z] != 0 || blockArray[x][y + 2][z] != 0) continue;
         int density = 0;
         for (int x2 = -1; x2 < 2; x2++) {
           for (int y2 = 1; y2 < 6; y2++) {

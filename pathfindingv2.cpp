@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <string>
+#include <omp.h>
 using namespace std;
 
 int main() {
@@ -87,6 +88,7 @@ int main() {
 
   int allowedOOB = 6;
 
+  #pragma omp parallel for
   for (int sec = 0; sec < 25; sec++) {
     vector<int> padCoords;
     vector<int> secDensities;
@@ -168,12 +170,11 @@ int main() {
               break;
             }
             
-            if (abs(padCoords[j * 3] - padCoords[usedPads[k] * 3]) < 3 && abs(padCoords[j * 3 + 1] - padCoords[usedPads[k] * 3 + 1]) < 2 && abs(padCoords[j * 3 + 2] - padCoords[usedPads[k] * 3 + 2]) < 3) {
+            if (abs(padCoords[j * 3] - padCoords[usedPads[k] * 3]) < 3 && abs(padCoords[j * 3 + 1] - padCoords[usedPads[k] * 3 + 1]) < 3 && abs(padCoords[j * 3 + 2] - padCoords[usedPads[k] * 3 + 2]) < 3) {
               //cout << "Pad " << j << " is too close to a used tp pad." << endl;
               weightChart[j] = INFINITY;
               break;
             }
-            
           }
           if (weightChart[j] < lowestWeight) {
             lowestWeight = weightChart[j];
