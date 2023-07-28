@@ -9,7 +9,7 @@ int main() {
   vector<int> overallPads;
   //Loading etherwarp pad coordinates
   ifstream padFile;
-  padFile.open("padstemptest.txt");
+  padFile.open("padsv3.txt");
   int x, y, z;
   while (padFile >> x >> y >> z) {
     cout << x << " " << y << " " << z << endl;
@@ -20,7 +20,7 @@ int main() {
   padFile.close();
   vector<int> gemDensities;
   ifstream densityFile;
-  densityFile.open("densitylisttesting.txt");
+  densityFile.open("densitylistv3.txt");
   int density;
   while (densityFile >> density) {
     gemDensities.push_back(density);

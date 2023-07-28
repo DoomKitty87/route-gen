@@ -9,7 +9,7 @@ int main() {
   vector<int> overallPads;
   //Loading etherwarp pad coordinates
   ifstream padFile;
-  padFile.open("padstemptest.txt");
+  padFile.open("padsv3.txt");
   int x, y, z;
   while (padFile >> x >> y >> z) {
     cout << x << " " << y << " " << z << endl;
@@ -20,43 +20,43 @@ int main() {
   padFile.close();
   vector<int> gemDensities;
   ifstream densityFile;
-  densityFile.open("densitylisttesting.txt");
+  densityFile.open("densitylistv3.txt");
   int density;
   while (densityFile >> density) {
     gemDensities.push_back(density);
   }
   cout << "Loaded " << overallPads.size() / 3 << " pads." << endl;
 
-  vector<int> gemstones;
-  vector<int> panes;
-  vector<int> blocks;
+  // vector<int> gemstones;
+  // vector<int> panes;
+  // vector<int> blocks;
 
-  //Loading gemstone coordinates
-  ifstream blockFile;
-  ifstream paneFile;
+  // //Loading gemstone coordinates
+  // ifstream blockFile;
+  // ifstream paneFile;
 
-  blockFile.open("blocksfinal.txt");
-  paneFile.open("panesfinal.txt");
+  // blockFile.open("blocksfinal.txt");
+  // paneFile.open("panesfinal.txt");
 
-  int blockx, blocky, blockz;
-  while (blockFile >> blockx >> blocky >> blockz) {
-    gemstones.push_back(blockx);
-    gemstones.push_back(blocky);
-    gemstones.push_back(blockz);
-    blocks.push_back(blockx);
-    blocks.push_back(blocky);
-    blocks.push_back(blockz);
-  }
-  blockFile.close();
-  while (paneFile >> blockx >> blocky >> blockz) {
-    gemstones.push_back(blockx);
-    gemstones.push_back(blocky);
-    gemstones.push_back(blockz);
-    panes.push_back(blockx);
-    panes.push_back(blocky);
-    panes.push_back(blockz);
-  }
-  paneFile.close();
+  // int blockx, blocky, blockz;
+  // while (blockFile >> blockx >> blocky >> blockz) {
+  //   gemstones.push_back(blockx);
+  //   gemstones.push_back(blocky);
+  //   gemstones.push_back(blockz);
+  //   blocks.push_back(blockx);
+  //   blocks.push_back(blocky);
+  //   blocks.push_back(blockz);
+  // }
+  // blockFile.close();
+  // while (paneFile >> blockx >> blocky >> blockz) {
+  //   gemstones.push_back(blockx);
+  //   gemstones.push_back(blocky);
+  //   gemstones.push_back(blockz);
+  //   panes.push_back(blockx);
+  //   panes.push_back(blocky);
+  //   panes.push_back(blockz);
+  // }
+  // paneFile.close();
 
   int desiredPathLength = 150;
 
@@ -167,13 +167,13 @@ int main() {
               weightChart[j] = INFINITY;
               break;
             }
-            /*
+            
             if (abs(padCoords[j * 3] - padCoords[usedPads[k] * 3]) < 3 && abs(padCoords[j * 3 + 1] - padCoords[usedPads[k] * 3 + 1]) < 2 && abs(padCoords[j * 3 + 2] - padCoords[usedPads[k] * 3 + 2]) < 3) {
               //cout << "Pad " << j << " is too close to a used tp pad." << endl;
               weightChart[j] = INFINITY;
               break;
             }
-            */
+            
           }
           if (weightChart[j] < lowestWeight) {
             lowestWeight = weightChart[j];

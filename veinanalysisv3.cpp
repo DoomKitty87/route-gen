@@ -46,10 +46,10 @@ int main() {
             }
           }
         }
-        if (density > 40) {
+        if (density > 45) {
           padFile << x + 202 << " " << y << " " << z + 202 << endl;
           densityFile << density << endl;
-          cout << x + 202 << " " << y + 202 << " " << z + 202 << " " << density << endl;
+          //cout << x + 202 << " " << y + 202 << " " << z + 202 << " " << density << endl;
         }
       }
     }
