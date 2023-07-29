@@ -269,7 +269,8 @@ int main() {
       avgDist += sqrt(pow(path[path.size() - 3] - path[0], 2) + pow(path[path.size() - 2] + 2 - path[1], 2) + pow(path[path.size() - 1] - path[2], 2));
       avgDist /= path.size() / 3 + 1;
       density /= float(path.size()) / 3;
-      #pragma omp critical {
+      #pragma omp critical 
+      {
       if (avgDist < lowestAvgDist && desiredPathLength - float(desiredPathLength) / 10 <= path.size() / 3 && path.size() / 3 <= desiredPathLength + float(desiredPathLength) / 10) {
         lowestAvgDist = avgDist;
         lowestAvgDistPath = path;

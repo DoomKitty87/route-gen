@@ -5,7 +5,7 @@ using namespace std;
 
 int main() {
   cout << "Starting analysis." << endl;
-  ifstream blockData("blockarraydatav2.txt");
+  ifstream blockData("blockarraydatav3.txt");
   ofstream padFile("padsv3.txt");
   ofstream densityFile("densitylistv3.txt");
   vector<vector<vector<int> > > blockArray;
@@ -32,7 +32,7 @@ int main() {
   cout << "Done loading block array data." << endl;
 
   for (int x = 0; x < 622; x++) {
-    cout << x << endl;
+    //cout << x << endl;
     for (int z = 0; z < 622; z++) {
       for (int y = 31; y < 187; y++) {
         if (blockArray[x][y + 1][z] != 0 || blockArray[x][y + 2][z] != 0) continue;
