@@ -86,7 +86,9 @@ int main() {
   float highestDensDist;
   int highestDensSector = -1;
 
-  int allowedOOB = 6;
+  int allowedOOB = 0;
+
+  omp_set_num_threads(4);
 
   #pragma omp parallel for
   for (int sec = 0; sec < 25; sec++) {
@@ -141,7 +143,7 @@ int main() {
           //Balance so that weights do not hit high or low limit
           int gemDensity = secDensities[j];
           //cout << gemDensity << endl;
-          weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / (gemDensity * 3);
+          weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / ((gemDensity - 44) * 3);
           //cout << weight << endl;
           weightChart.push_back(weight);
           //std::cout << weight << endl;
