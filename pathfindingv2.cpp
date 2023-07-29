@@ -61,7 +61,7 @@ int main() {
 
   int desiredPathLength = 150;
 
-  int jadecoordsx = 824;
+  int jadecoordsx = 823;
   int jadecoordsz = 202;
 
   vector<vector<int> > sectors;
@@ -93,7 +93,7 @@ int main() {
     vector<int> padCoords;
     vector<int> secDensities;
     for (int i = 0; i < overallPads.size() / 3; i++) {
-      if (overallPads[i * 3] <= sectors[sec][0] + allowedOOB && overallPads[i * 3] >= sectors[sec][2] - allowedOOB && overallPads[i * 3 + 2] >= sectors[sec][1] - allowedOOB && overallPads[i * 3 + 2] <= sectors[sec][3] + allowedOOB) {
+      if (overallPads[i * 3] <= sectors[sec][0] + allowedOOB && overallPads[i * 3] > sectors[sec][2] - allowedOOB && overallPads[i * 3 + 2] >= sectors[sec][1] - allowedOOB && overallPads[i * 3 + 2] < sectors[sec][3] + allowedOOB) {
         padCoords.push_back(overallPads[i * 3]);
         padCoords.push_back(overallPads[i * 3 + 1]);
         padCoords.push_back(overallPads[i * 3 + 2]);
@@ -109,7 +109,7 @@ int main() {
     float highestDensityDist;
 
     for (int i = 0; i < padCoords.size() / 3; i++) {
-      cout << "Starting from pad " << i + 1 << endl;
+      //cout << "Starting from pad " << i + 1 << endl;
       //Main loop
       //Start of path
       vector<int> path;
@@ -269,6 +269,7 @@ int main() {
       avgDist += sqrt(pow(path[path.size() - 3] - path[0], 2) + pow(path[path.size() - 2] + 2 - path[1], 2) + pow(path[path.size() - 1] - path[2], 2));
       avgDist /= path.size() / 3 + 1;
       density /= float(path.size()) / 3;
+      #pragma omp critical {
       if (avgDist < lowestAvgDist && desiredPathLength - float(desiredPathLength) / 10 <= path.size() / 3 && path.size() / 3 <= desiredPathLength + float(desiredPathLength) / 10) {
         lowestAvgDist = avgDist;
         lowestAvgDistPath = path;
@@ -278,6 +279,7 @@ int main() {
         highestDensity = density;
         highestDensityPath = path;
         highestDensityDist = avgDist;
+      }
       }
     }
     string pathOutput = "[";
