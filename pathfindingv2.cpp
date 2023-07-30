@@ -13,12 +13,24 @@ int main() {
   padFile.open("padsv3.txt");
   int x, y, z;
   while (padFile >> x >> y >> z) {
-    cout << x << " " << y << " " << z << endl;
+    //cout << x << " " << y << " " << z << endl;
     overallPads.push_back(x);
     overallPads.push_back(y);
     overallPads.push_back(z);
   }
   padFile.close();
+  ifstream gemstoneData("blockarraydatav3.txt");
+  vector<vector<vector<int> > > blockData;
+  blockData.resize(622);
+  for (int x = 0; x < 622; x++) {
+    blockData[x].resize(256);
+    for (int y = 0; y < 256; y++) {
+      blockData[x][y].resize(622);
+      for (int z = 0; z < 622; z++) {
+        gemstoneData >> blockData[x][y][z];
+      }
+    }
+  }
   vector<int> gemDensities;
   ifstream densityFile;
   densityFile.open("densitylistv3.txt");
@@ -90,7 +102,7 @@ int main() {
 
   omp_set_num_threads(4);
 
-  #pragma omp parallel for
+  //#pragma omp parallel for
   for (int sec = 0; sec < 25; sec++) {
     vector<int> padCoords;
     vector<int> secDensities;
@@ -111,7 +123,7 @@ int main() {
     float highestDensityDist;
 
     for (int i = 0; i < padCoords.size() / 3; i++) {
-      //cout << "Starting from pad " << i + 1 << endl;
+      cout << "Starting from pad " << i + 1 << endl;
       //Main loop
       //Start of path
       vector<int> path;
@@ -183,9 +195,10 @@ int main() {
             lowestIndex = j;
           }
         }
-        /*
+        
         bool blocked = true;
         while (blocked) {
+          //cout << "Checking for blocking." << endl;
           int headx = path[path.size() - 3];
           int heady = path[path.size() - 2] + 2;
           int headz = path[path.size() - 1];
@@ -197,17 +210,13 @@ int main() {
           int ydist = taily - heady;
           int zdist = tailz - headz;
           int interval = floor(abs(xdist) + abs(ydist) + abs(zdist));
-          for (int k = 0; k < interval; k++) {
+          if (interval < 10) break;
+          for (int k = interval / 4; k < interval; k++) {
             int x = round(headx + (float(xdist) / interval) * k);
             int y = round(heady + (float(ydist) / interval) * k);
             int z = round(headz + (float(zdist) / interval) * k);
-            for (int l = 0; l < gemstones.size() / 3; l++) {
-              if (x == gemstones[l * 3] && y == gemstones[l * 3 + 1] && z == gemstones[l * 3 + 2]) {
-                blocked = true;
-                //cout << "Blocked." << endl;
-                break;
-              }
-            }
+            //cout << x - 202 << " " << y << " " << z - 202 << endl;
+            if (blockData[x - 202][y][z - 202] != 0) blocked = true;
             if (blocked) {
               weightChart[lowestIndex] = INFINITY;
               lowestWeight = INFINITY;
@@ -223,7 +232,7 @@ int main() {
             }
           }
         }
-        */
+        
         //cout << "Done analyzing weights." << endl;
         if (lowestWeight == INFINITY) {
           //No path
@@ -252,6 +261,7 @@ int main() {
         */
         density += secDensities[lowestIndex];
       }
+      //cout << "E" << endl;
       /*
       string pathOutputTmp = "[";
       for (int j = 0; j < path.size() / 3; j++) {
