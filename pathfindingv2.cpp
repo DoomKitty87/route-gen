@@ -102,7 +102,7 @@ int main() {
 
   omp_set_num_threads(4);
 
-  //#pragma omp parallel for
+  #pragma omp parallel for
   for (int sec = 0; sec < 25; sec++) {
     vector<int> padCoords;
     vector<int> secDensities;
@@ -123,7 +123,7 @@ int main() {
     float highestDensityDist;
 
     for (int i = 0; i < padCoords.size() / 3; i++) {
-      cout << "Starting from pad " << i + 1 << endl;
+      //cout << "Starting from pad " << i + 1 << endl;
       //Main loop
       //Start of path
       vector<int> path;
@@ -210,7 +210,6 @@ int main() {
           int ydist = taily - heady;
           int zdist = tailz - headz;
           int interval = floor(abs(xdist) + abs(ydist) + abs(zdist));
-          if (interval < 10) break;
           for (int k = interval / 4; k < interval; k++) {
             int x = round(headx + (float(xdist) / interval) * k);
             int y = round(heady + (float(ydist) / interval) * k);
@@ -231,7 +230,10 @@ int main() {
               break;
             }
           }
+          if (lowestWeight == INFINITY) break;
         }
+        
+        //cout << lowestWeight << endl;
         
         //cout << "Done analyzing weights." << endl;
         if (lowestWeight == INFINITY) {
@@ -281,8 +283,6 @@ int main() {
       avgDist += sqrt(pow(path[path.size() - 3] - path[0], 2) + pow(path[path.size() - 2] + 2 - path[1], 2) + pow(path[path.size() - 1] - path[2], 2));
       avgDist /= path.size() / 3 + 1;
       density /= float(path.size()) / 3;
-      #pragma omp critical 
-      {
       if (avgDist < lowestAvgDist && desiredPathLength - float(desiredPathLength) / 10 <= path.size() / 3 && path.size() / 3 <= desiredPathLength + float(desiredPathLength) / 10) {
         lowestAvgDist = avgDist;
         lowestAvgDistPath = path;
@@ -292,7 +292,6 @@ int main() {
         highestDensity = density;
         highestDensityPath = path;
         highestDensityDist = avgDist;
-      }
       }
     }
     string pathOutput = "[";
@@ -316,7 +315,8 @@ int main() {
     }
     pathOutput += "]";
     cout << pathOutput << endl;
-
+    #pragma omp critical
+    {
     if (lowestAvgDist < lowestAvgDst) {
       lowestAvgDst = lowestAvgDist;
       lowestAvgDstPath = lowestAvgDistPath;
@@ -328,6 +328,7 @@ int main() {
       highestDensPath = highestDensityPath;
       highestDensSector = sec;
       highestDensDist = highestDensityDist;
+    }
     }
   }
   string pathOutput = "[";
