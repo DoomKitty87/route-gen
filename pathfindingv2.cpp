@@ -100,7 +100,7 @@ int main() {
 
   int allowedOOB = 0;
 
-  omp_set_num_threads(4);
+  omp_set_num_threads(1);
 
   #pragma omp parallel for
   for (int sec = 0; sec < 25; sec++) {
@@ -138,6 +138,7 @@ int main() {
 
       //Below should be run for every pad in the path
       while (!done) {
+        //cout << "C" << endl;
         //cout << "Adding new pad to path." << endl;
         vector<float> weightChart;
         for (int j = 0; j < padCoords.size() / 3; j++) {
@@ -195,9 +196,11 @@ int main() {
             lowestIndex = j;
           }
         }
+        //cout << "C.5" << endl;
         
         bool blocked = true;
         while (blocked) {
+          //cout << "C.6" << endl;
           //cout << "Checking for blocking." << endl;
           int headx = path[path.size() - 3];
           int heady = path[path.size() - 2] + 2;
@@ -210,10 +213,12 @@ int main() {
           int ydist = taily - heady;
           int zdist = tailz - headz;
           int interval = floor(abs(xdist) + abs(ydist) + abs(zdist));
-          for (int k = interval / 4; k < interval; k++) {
+          for (int k = 1; k < interval; k++) {
+            //cout << k << endl;
             int x = round(headx + (float(xdist) / interval) * k);
             int y = round(heady + (float(ydist) / interval) * k);
             int z = round(headz + (float(zdist) / interval) * k);
+            if (max(abs(x - headx), abs(z - headz)) < 2 && y - heady < 5) continue;
             //cout << x - 202 << " " << y << " " << z - 202 << endl;
             if (blockData[x - 202][y][z - 202] != 0) blocked = true;
             if (blocked) {
@@ -229,10 +234,15 @@ int main() {
               }
               break;
             }
+            
+            blocked = false;
           }
+          //cout << lowestWeight << endl;
           if (lowestWeight == INFINITY) break;
+          //cout << "C.7" << endl;
         }
         
+        //cout << "C.75" << endl;
         //cout << lowestWeight << endl;
         
         //cout << "Done analyzing weights." << endl;
@@ -262,6 +272,7 @@ int main() {
         }
         */
         density += secDensities[lowestIndex];
+        //cout << "D" << endl;
       }
       //cout << "E" << endl;
       /*
