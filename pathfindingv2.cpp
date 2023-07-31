@@ -100,7 +100,7 @@ int main() {
 
   int allowedOOB = 0;
 
-  omp_set_num_threads(1);
+  omp_set_num_threads(4);
 
   #pragma omp parallel for
   for (int sec = 0; sec < 25; sec++) {
@@ -157,6 +157,7 @@ int main() {
           int gemDensity = secDensities[j];
           //cout << gemDensity << endl;
           weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / ((gemDensity - 44) * 3);
+          if (sqrt(pow(xdiff, 2) + pow(ydiff, 2) + pow(zdiff, 2)) > 62) weight = INFINITY;
           //cout << weight << endl;
           weightChart.push_back(weight);
           //std::cout << weight << endl;
@@ -218,9 +219,10 @@ int main() {
             int x = round(headx + (float(xdist) / interval) * k);
             int y = round(heady + (float(ydist) / interval) * k);
             int z = round(headz + (float(zdist) / interval) * k);
-            if (max(abs(x - headx), abs(z - headz)) < 2 && y - heady < 5) continue;
+            if (max(abs(x - headx), abs(z - headz)) < 2 && y - heady < 3) continue;
             //cout << x - 202 << " " << y << " " << z - 202 << endl;
-            if (blockData[x - 202][y][z - 202] != 0) blocked = true;
+            try {if (blockData[x - 202][y][z - 202] != 0) blocked = true;}
+            catch (const std::out_of_range& oor) {blocked = true;}
             if (blocked) {
               weightChart[lowestIndex] = INFINITY;
               lowestWeight = INFINITY;
