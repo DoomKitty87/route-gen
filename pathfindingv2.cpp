@@ -100,7 +100,7 @@ int main() {
 
   int allowedOOB = 0;
 
-  omp_set_num_threads(1);
+  omp_set_num_threads(4);
 
   #pragma omp parallel for
   for (int sec = 0; sec < 25; sec++) {
@@ -220,7 +220,8 @@ int main() {
             int y = round(heady + (float(ydist) / interval) * k);
             int z = round(headz + (float(zdist) / interval) * k);
             if (max(abs(x - headx), abs(z - headz)) < 2 && abs(y - heady) < 3) continue;
-            cout << x - 202 << " " << y << " " << z - 202 << endl;
+            //cout << x - 202 << " " << y << " " << z - 202 << endl;
+            if (x - 202 > 621 || x - 202 < 0 || y > 255 || y < 0 || z - 202 > 621 || z - 202 < 0) continue;
             if (blockData[x - 202][y][z - 202] != 0) blocked = true;
             if (blocked) {
               weightChart[lowestIndex] = INFINITY;
