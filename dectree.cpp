@@ -45,9 +45,22 @@ pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords
   return {avgweight, topfivepoints};
 }
 //Make main a function to run one sector later, then put a simple for loop in main!!!
-string runsec(int sector, vector<vector<int> > padcoords, vector<int> densities) {
+string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) {
   int desiredpathlength = 150;
-
+  // Coords in ch go from 202-823 (inclusive)
+  int xstart = 823 - ((sector % 5) * 128);
+  int xend = xstart - 128;
+  int zstart = 202 + (sector / 5 * 128);
+  int zend = zstart + 128;
+  cout << "Sector " << sector << " has x range " << xstart << " to " << xend << " and z range " << zstart << " to " << zend << endl;
+  vector<vector<int> > padcoords;
+  vector<int> densities;
+  for (int i = 0; i < densinput.size(); i++) {
+    if (padinput[i][0] > xstart || padinput[i][0] < xend || padinput[i][2] < zstart || padinput[i][2] > zend) continue;
+    padcoords.push_back(padinput[i]);
+    densities.push_back(densinput[i]);
+  }
+  cout << "Sector " << sector << " has " << padcoords.size() << " pads" << endl;
   //For each possible starting point
   //Create an average weight from that point of the top 5 weights of the next points to go to for it
   //Then continue based on a series of two points: current point (final) -> 5 possible points (determine top by getting one with best average weights in its top 5)
@@ -104,7 +117,10 @@ int main() {
     padcoords.push_back(tmp);
   }
   while (densfile >> x) densities.push_back(x);
+  densfile.close();
+  padfile.close();
   for (int i = 0; i < 25; i++) {
+    cout << i << endl;
     cout << runsec(i, padcoords, densities) << endl;
   }
 }
