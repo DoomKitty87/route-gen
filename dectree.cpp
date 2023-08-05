@@ -9,7 +9,7 @@ pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords
   vector<int> topfivepoints;
   vector<float> topfiveweights;
   float weightthreshold = INFINITY;
-  for (int i = 0; i < padcoords.size(); i++) {
+  for (int i = 0; i < densities.size(); i++) {
     if (i == curr) continue;
     float weight = 0;
     float dist = sqrt(pow(padcoords[i][0] - padcoords[curr][0], 2) + pow(padcoords[i][1] - padcoords[curr][1], 2) + pow(padcoords[i][2] - padcoords[curr][2], 2));
@@ -66,7 +66,7 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
   //Then continue based on a series of two points: current point (final) -> 5 possible points (determine top by getting one with best average weights in its top 5)
   int bestavgindex;
   float bestavg = INFINITY;
-  for (int i = 0; i < padcoords.size(); i++) {
+  for (int i = 0; i < densities.size(); i++) {
     float pointweight = calcavgweight(i, padcoords, densities, -1, desiredpathlength, 0).first;
     if (pointweight < bestavg) {
       bestavg = pointweight;
