@@ -105,7 +105,7 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
 
 int main() {
   ifstream padfile("padsv3.txt");
-  ifstream densfile("densityv3.txt");
+  ifstream densfile("densitylistv3.txt");
   vector<vector<int> > padcoords;
   vector<int> densities;
   int x, y, z;
