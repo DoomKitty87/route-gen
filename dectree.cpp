@@ -5,19 +5,22 @@
 #include <string>
 using namespace std;
 
-pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords, vector<int> densities, int startingpad, int desiredlength) {
+pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords, vector<int> densities, int startingpad, int desiredlength, int padsused) {
   vector<int> topfivepoints;
   vector<float> topfiveweights;
   float weightthreshold = INFINITY;
   for (int i = 0; i < padcoords.size(); i++) {
     if (i == curr) continue;
     float weight = 0;
+    float dist = sqrt(pow(padcoords[i][0] - padcoords[curr][0], 2) + pow(padcoords[i][1] - padcoords[curr][1], 2) + pow(padcoords[i][2] - padcoords[curr][2], 2));
     if (startingpad == -1) { // ignore distance to start component
-      weight = pow(dist, 2) / dens;
+      weight = pow(dist, 2) / (densities[i] - 44 * 3);
     }
     else {
-      weight = (pow(dist, 2) + pow(startdist, 2)) / dens;
+      float startdist = sqrt(pow(padcoords[i][0] - padcoords[startingpad][0], 2) + pow(padcoords[i][1] - padcoords[startingpad][1], 2) + pow(padcoords[i][2] - padcoords[startingpad][2], 2));
+      weight = ((pow(dist, 2) + pow(startdist, 2 * (padsused / float(desiredlength))))) / (densities[i] - 44 * 3);
     }
+    if (dist > 62) weight = INFINITY;
     //Calcluate weight
     if (weight < weightthreshold) {
       topfivepoints.push_back(i);
@@ -51,7 +54,7 @@ string runsec(int sector, vector<vector<int> > padcoords, vector<int> densities)
   int bestavgindex;
   float bestavg = INFINITY;
   for (int i = 0; i < padcoords.size(); i++) {
-    float pointweight = calcavgweight(i, padcoords, densities, -1, desiredpathlength).first;
+    float pointweight = calcavgweight(i, padcoords, densities, -1, desiredpathlength, 0).first;
     if (pointweight < bestavg) {
       bestavg = pointweight;
       bestavgindex = i;
@@ -62,11 +65,11 @@ string runsec(int sector, vector<vector<int> > padcoords, vector<int> densities)
   vector<int> path;
   for (int i = 0; i < desiredpathlength; i++) {
     path.push_back(currpoint);
-    vector<int> topfivepoints = calcavgweight(currpoint, padcoords, densities, path[0], desiredpathlength).second;
+    vector<int> topfivepoints = calcavgweight(currpoint, padcoords, densities, path[0], desiredpathlength, path.size()).second;
     bestavgindex = -1;
     bestavg = INFINITY;
     for (int j = 0; j < 5; j++) {
-      float pointweight = calcavgweight(topfivepoints[j], padcoords, densities, path[0], desiredpathlength).first;
+      float pointweight = calcavgweight(topfivepoints[j], padcoords, densities, path[0], desiredpathlength, path.size()).first;
       if (pointweight < bestavg) {
         bestavg = pointweight;
         bestavgindex = topfivepoints[j];
@@ -79,6 +82,8 @@ string runsec(int sector, vector<vector<int> > padcoords, vector<int> densities)
   string pathexport = "[";
   for (int i = 0; i < path.size(); i++) {
     //add point to export or something idk
+    pathexport += "{\"x\":" + to_string(padcoords[path[i]][0]) + ",\"y\":" + to_string(padcoords[path[i]][1]) + ",\"z\":" + to_string(padcoords[path[i]][2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":\"" + to_string(i + 1) + "\"}}";
+    if (i != path.size() - 1) pathexport += ",";
   }
   pathexport += "]";
 
