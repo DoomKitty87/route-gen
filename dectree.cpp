@@ -5,7 +5,7 @@
 #include <string>
 using namespace std;
 
-pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords, vector<int> densities, int startingpad, int desiredlength, vector<int> padsused) {
+pair<float, vector<int> > calcweightcap(int curr, vector<vector<int> > padcoords, vector<int> densities, int startingpad, int desiredlength, vector<int> padsused) {
   vector<int> topfivepoints;
   vector<float> topfiveweights;
   float weightthreshold = INFINITY;
@@ -21,14 +21,59 @@ pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords
     float weight = 0;
     float dist = sqrt(pow(padcoords[i][0] - padcoords[curr][0], 2) + pow(padcoords[i][1] - padcoords[curr][1], 2) + pow(padcoords[i][2] - padcoords[curr][2], 2));
     if (startingpad == -1) { // ignore distance to start component
-      weight = pow(dist, 2) / float(pow(densities[i] - 44, 2));
+      weight = pow(dist, 2) / float(pow(densities[i] - 44, 5));
     }
     else {
       float startdist = sqrt(pow(padcoords[i][0] - padcoords[startingpad][0], 2) + pow(padcoords[i][1] - padcoords[startingpad][1], 2) + pow(padcoords[i][2] - padcoords[startingpad][2], 2));
-      weight = ((pow(dist, 2) + pow(startdist, 2 * (padsused.size() / float(desiredlength))))) / float(pow(densities[i] - 44, 2));
+      weight = ((pow(dist, 2) + pow(startdist, 2 * (padsused.size() / float(desiredlength))))) / float(pow(densities[i] - 44, 5));
     }
     //cout << "Done with weight calculation" << endl;
     if (dist > 62) continue;
+    //Calcluate weight
+    if (weight < weightthreshold) {
+      topfivepoints.push_back(i);
+      topfiveweights.push_back(weight);
+      //Sort top 5 and push out highest
+      int highestindx = -1;
+      float highestweight = 0;
+      if (topfiveweights.size() > 5) {
+        for (int j = 0; j < 5; j++) {
+          if (topfiveweights[j] > highestweight) {
+            highestindx = j;
+            highestweight = topfiveweights[j];
+          }
+        }
+        topfivepoints.erase(topfivepoints.begin() + highestindx);
+        topfiveweights.erase(topfiveweights.begin() + highestindx);
+      }
+    }
+    for (int j = 0; j < topfiveweights.size(); j++) {
+      if (topfiveweights[j] < weightthreshold) weightthreshold = topfiveweights[j];
+    }
+  }
+  //Average weights
+  float avgweight = 0;
+  for (int i = 0; i < topfiveweights.size(); i++) avgweight += topfiveweights[i];
+  avgweight /= topfiveweights.size();
+  return {avgweight, topfivepoints};
+}
+
+pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords, vector<int> densities, int startingpad, int desiredlength, vector<int> padsused) {
+  vector<int> topfivepoints;
+  vector<float> topfiveweights;
+  float weightthreshold = INFINITY;
+  //cout << "Calculating avg weight" << endl;
+  for (int i = 0; i < densities.size(); i++) {
+    if (i == curr) continue;
+    bool cntue = false;
+    for (int j = 0; j < padsused.size(); j++) {
+      if (i == padsused[j]) cntue = true;
+    }
+    if (cntue) continue;
+    //cout << "Starting weight calcluation" << endl;
+    vector<int> padsusedtmp = padsused;
+    padsusedtmp.push_back(curr);
+    float weight = calcweightcap(i, padcoords, densities, startingpad, desiredlength, padsusedtmp).first;
     //Calcluate weight
     if (weight < weightthreshold) {
       topfivepoints.push_back(i);
@@ -69,7 +114,7 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
   vector<vector<int> > padcoords;
   vector<int> densities;
   for (int i = 0; i < densinput.size(); i++) {
-    if (padinput[i][0] > xstart || padinput[i][0] < xend || padinput[i][2] < zstart || padinput[i][2] > zend) continue;
+    if (padinput[i][0] > xstart || padinput[i][0] <= xend || padinput[i][2] < zstart || padinput[i][2] >= zend) continue;
     padcoords.push_back(padinput[i]);
     densities.push_back(densinput[i]);
   }
@@ -149,7 +194,7 @@ int main() {
   for (int i = 0; i < 25; i++) {
     if (i == 12) continue;
     cout << i + 1 << endl;
-    runsec(i, padcoords, densities);
-    //cout << runsec(i, padcoords, densities) << endl;
+    //runsec(i, padcoords, densities);
+    cout << runsec(i, padcoords, densities) << endl;
   }
 }
