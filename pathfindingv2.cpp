@@ -156,7 +156,8 @@ int main() {
           //Balance so that weights do not hit high or low limit
           int gemDensity = secDensities[j];
           //cout << gemDensity << endl;
-          weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / ((gemDensity - 44) * 3);
+          //weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / ((gemDensity - 44) * 3);
+          weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / (gemDensity);
           if (sqrt(pow(xdiff, 2) + pow(ydiff, 2) + pow(zdiff, 2)) > 62) weight = INFINITY;
           //cout << weight << endl;
           weightChart.push_back(weight);
