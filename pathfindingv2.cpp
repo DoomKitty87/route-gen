@@ -216,6 +216,7 @@ int main() {
           int zdist = tailz - headz;
           int interval = floor(abs(xdist) + abs(ydist) + abs(zdist));
           for (int k = 1; k < interval; k++) {
+            //if (k > 5 && k < interval - 5) continue;
             //cout << k << endl;
             int x = round(headx + (float(xdist) / interval) * k);
             int y = round(heady + (float(ydist) / interval) * k);
