@@ -165,7 +165,8 @@ int main() {
             angleWeight = abs(min(angleDiff, 360 - angleDiff) - 90) / 100 + 1;
           }
           //cout << gemDensity << endl;
-          weight = angleWeight * (pow(dist, 3) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / ((gemDensity - 44) * 4);
+          //weight = angleWeight * (pow(dist, 3) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / ((gemDensity - 44) * 4);
+          weight = (pow(dist, 3) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / ((gemDensity - 44) * 4);
           //weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength))));
           if (sqrt(pow(xdiff, 2) + pow(ydiff, 2) + pow(zdiff, 2)) > 62) weight = INFINITY;
           //cout << weight << endl;
