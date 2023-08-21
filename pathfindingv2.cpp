@@ -155,9 +155,18 @@ int main() {
           //cout << startdist << " " << dist << endl;
           //Balance so that weights do not hit high or low limit
           int gemDensity = secDensities[j];
+          float angleWeight = 0;
+          float angleDiff = 180 / 3.14159 * abs(atan2(path[path.size() - 6] - path[path.size() - 3], path[path.size() - 4] - path[path.size() - 1]) - atan2(padCoords[j * 3] - path[path.size() - 3], padCoords[j * 3 + 2] - path[path.size() - 1]));
+          if (gemDensity > 50) {
+            // = abs(min(angleDiff, 360 - angleDiff) - 120) / 10 + 1;
+            angleWeight = abs(min(angleDiff, 360 - angleDiff)) / 100 + 1;
+          }
+          else {
+            angleWeight = abs(min(angleDiff, 360 - angleDiff) - 90) / 100 + 1;
+          }
           //cout << gemDensity << endl;
-          //weight = (pow(dist, 3) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / ((gemDensity - 44) * 4);
-          weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength))));
+          weight = angleWeight * (pow(dist, 3) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength)))) / ((gemDensity - 44) * 4);
+          //weight = (pow(dist, 2) + pow(startdist, 2 * ((usedPads.size() + 1) / float(desiredPathLength))));
           if (sqrt(pow(xdiff, 2) + pow(ydiff, 2) + pow(zdiff, 2)) > 62) weight = INFINITY;
           //cout << weight << endl;
           weightChart.push_back(weight);
