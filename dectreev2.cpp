@@ -17,7 +17,7 @@ pair<float, vector<int> > calcweightcap(int curr, vector<vector<int> > padcoords
       if (i == padsused[j]) cntue = true;
     }
     if (cntue) continue;
-    //cout << "Starting weight calcluation" << endl;
+    cout << "Starting weight calcluation" << endl;
     float weight = 0;
     float dist = sqrt(pow(padcoords[i][0] - padcoords[curr][0], 2) + pow(padcoords[i][1] - padcoords[curr][1], 2) + pow(padcoords[i][2] - padcoords[curr][2], 2));
     if (startingpad == -1) { // ignore distance to start component
@@ -29,7 +29,7 @@ pair<float, vector<int> > calcweightcap(int curr, vector<vector<int> > padcoords
       //weight = ((pow(dist, 2) + pow(startdist, 2 * (padsused.size() / float(desiredlength))))) / float(pow(densities[i] - 44, 5));
       weight = ((pow(dist, 2) + pow(startdist, 2 * (padsused.size() / float(desiredlength)))));
     }
-    //cout << "Done with weight calculation" << endl;
+    cout << "Done with weight calculation" << endl;
     if (dist > 62) continue;
     //Calcluate weight
     if (weight < weightthreshold) {
@@ -134,16 +134,18 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
     vector<int> path;
     int currpoint = i;
     for (int j = 0; j < desiredpathlength; j++) {
-      //cout << "Determining pad " << i + 1 << endl;
+      cout << "Determining pad " << j + 1 << endl;
       path.push_back(currpoint);
+      cout << "getting top 5" << endl;
       vector<int> topfivepoints = calcweightcap(currpoint, padcoords, densities, path[0], desiredpathlength, path).second;
+      cout << "got top 5" << endl;
       bestavgindex = -1;
       bestavg = INFINITY;
-      //cout << topfivepoints.size() << endl;
+      cout << topfivepoints.size() << endl;
       for (int k = 0; k < topfivepoints.size(); k++) {
-        //cout << "running test on " << j << endl;
+        cout << "running test on " << k << endl;
         vector<int> pathtmp = path;
-        pathtmp.push_back(topfivepoints[j]);
+        pathtmp.push_back(topfivepoints[k]);
         float pointweight = calcweightcap(topfivepoints[k], padcoords, densities, path[0], desiredpathlength, pathtmp).first;
         if (pointweight < bestavg) {
           bestavg = pointweight;
@@ -153,27 +155,27 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
       if (topfivepoints.size() == 0) break;
       currpoint = bestavgindex;
     }
-
+    cout << "exportin gpath" << endl;
     //Exporting path & calculating points
     string pathexport = "[";
-    for (int i = 0; i < path.size(); i++) {
+    for (int j = 0; j < path.size(); j++) {
       //add point to export or something idk
-      pathexport += "{\"x\":" + to_string(padcoords[path[i]][0]) + ",\"y\":" + to_string(padcoords[path[i]][1]) + ",\"z\":" + to_string(padcoords[path[i]][2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":\"" + to_string(i + 1) + "\"}}";
-      if (i != path.size() - 1) pathexport += ",";
+      pathexport += "{\"x\":" + to_string(padcoords[path[j]][0]) + ",\"y\":" + to_string(padcoords[path[j]][1]) + ",\"z\":" + to_string(padcoords[path[j]][2]) + ",\"r\":0,\"g\":1,\"b\":0,\"options\":{\"name\":\"" + to_string(j + 1) + "\"}}";
+      if (j != path.size() - 1) pathexport += ",";
     }
     pathexport += "]";
     float dens = 0;
-    for (int i = 0; i < path.size(); i++) {
-      dens += densities[path[i]];
+    for (int j = 0; j < path.size(); j++) {
+      dens += densities[path[j]];
     }
     float dist = 0;
-    for (int i = 0; i < path.size() - 1; i++) {
-      dist += sqrt(pow(padcoords[path[i]][0] - padcoords[path[i + 1]][0], 2) + pow(padcoords[path[i]][1] - padcoords[path[i + 1]][1], 2) + pow(padcoords[path[i]][2] - padcoords[path[i + 1]][2], 2));
+    for (int j = 0; j < path.size() - 1; j++) {
+      dist += sqrt(pow(padcoords[path[j]][0] - padcoords[path[j + 1]][0], 2) + pow(padcoords[path[j]][1] - padcoords[path[j + 1]][1], 2) + pow(padcoords[path[j]][2] - padcoords[path[j + 1]][2], 2));
     }
     dens /= path.size();
     dist /= path.size();
-    //cout << dens << endl;
-    //cout << dist << endl;
+    cout << dens << endl;
+    cout << dist << endl;
     if (dist < lowestDist) {
       lowestDist = dist;
       lowestDistPath = pathexport;

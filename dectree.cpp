@@ -5,7 +5,7 @@
 #include <string>
 using namespace std;
 
-pair<float, vector<int> > calcweightcap(int curr, vector<vector<int> > padcoords, vector<int> densities, int startingpad, int desiredlength, vector<int> padsused) {
+pair<float, vector<int> > calcweightcap(int curr, vector<vector<int> > padcoords, vector<int> densities, int startingpad, int desiredlength, vector<int> padsused, vector<vector<vector<int> > > blockData) {
   vector<int> topfivepoints;
   vector<float> topfiveweights;
   float weightthreshold = INFINITY;
@@ -15,6 +15,7 @@ pair<float, vector<int> > calcweightcap(int curr, vector<vector<int> > padcoords
     bool cntue = false;
     for (int j = 0; j < padsused.size(); j++) {
       if (i == padsused[j]) cntue = true;
+      if (abs(padcoords[i][0] - padcoords[padsused[j]][0] < 3) && abs(padcoords[i][1] - padcoords[padsused[j]][1] < 3) && abs(padcoords[i][2] - padcoords[padsused[j]][2]) < 3) cntue = true;
     }
     if (cntue) continue;
     //cout << "Starting weight calcluation" << endl;
@@ -31,6 +32,38 @@ pair<float, vector<int> > calcweightcap(int curr, vector<vector<int> > padcoords
     }
     //cout << "Done with weight calculation" << endl;
     if (dist > 62) continue;
+    bool blocked = true;
+    while (blocked) {
+      if (startingpad == -1) {
+        blocked = false;
+        break;
+      }
+      //cout << "C.6" << endl;
+      //cout << "Checking for blocking." << endl;
+      int headx = padcoords[padsused[padsused.size() - 1]][0];
+      int heady = padcoords[padsused[padsused.size() - 1]][1] + 2;
+      int headz = padcoords[padsused[padsused.size() - 1]][2];
+      int tailx = padcoords[i][0];
+      int taily = padcoords[i][1];
+      int tailz = padcoords[i][2];
+      blocked = false;
+      int xdist = tailx - headx;
+      int ydist = taily - heady;
+      int zdist = tailz - headz;
+      int interval = floor(abs(xdist) + abs(ydist) + abs(zdist));
+      for (int k = 1; k < interval; k++) {
+        //if (k > 5 && k < interval - 5) continue;
+        //cout << k << endl;
+        int x = round(headx + (float(xdist) / interval) * k);
+        int y = round(heady + (float(ydist) / interval) * k);
+        int z = round(headz + (float(zdist) / interval) * k);
+        if (max(abs(x - headx), abs(z - headz)) < 2 && abs(y - heady) < 3) continue;
+        //cout << x - 202 << " " << y << " " << z - 202 << endl;
+        if (x - 202 > 621 || x - 202 < 0 || y > 255 || y < 0 || z - 202 > 621 || z - 202 < 0) continue;
+        if (blockData[x - 202][y][z - 202] != 0) blocked = true;
+      }
+    }
+    if (blocked) continue;
     //Calcluate weight
     if (weight < weightthreshold) {
       topfivepoints.push_back(i);
@@ -75,7 +108,8 @@ pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords
     //cout << "Starting weight calcluation" << endl;
     vector<int> padsusedtmp = padsused;
     padsusedtmp.push_back(curr);
-    float weight = calcweightcap(i, padcoords, densities, startingpad, desiredlength, padsusedtmp).first;
+    float weight = 0;
+    //float weight = calcweightcap(i, padcoords, densities, startingpad, desiredlength, padsusedtmp).first;
     //Calcluate weight
     if (weight < weightthreshold) {
       topfivepoints.push_back(i);
@@ -105,7 +139,7 @@ pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords
   return {avgweight, topfivepoints};
 }
 //Make main a function to run one sector later, then put a simple for loop in main!!!
-string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) {
+string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput, vector<vector<vector<int> > > blockData) {
   int desiredpathlength = 150;
   // Coords in ch go from 202-823 (inclusive)
   int xstart = 823 - ((sector % 5) * 128);
@@ -132,7 +166,7 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
   int bestWght = INFINITY;
   vector<int> path;
   for (int i = 0; i < densities.size(); i++) {
-    int weight = calcweightcap(i, padcoords, densities, -1, desiredpathlength, path).first;
+    int weight = calcweightcap(i, padcoords, densities, -1, desiredpathlength, path, blockData).first;
     if (weight < bestWght) {
       bestWght = weight;
       startPoint = i;
@@ -144,9 +178,9 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
     //vector<int> path;
     int currpoint = startPoint;
     for (int i = 0; i < desiredpathlength; i++) {
-      //cout << "Determining pad " << i + 1 << endl;
+      cout << "Determining pad " << i + 1 << endl;
       path.push_back(currpoint);
-      vector<int> topfivepoints = calcavgweight(currpoint, padcoords, densities, path[0], desiredpathlength, path).second;
+      vector<int> topfivepoints = calcweightcap(currpoint, padcoords, densities, path[0], desiredpathlength, path, blockData).second;
       bestavgindex = -1;
       bestavg = INFINITY;
       //cout << topfivepoints.size() << endl;
@@ -154,7 +188,7 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
         //cout << "running test on " << j << endl;
         vector<int> pathtmp = path;
         pathtmp.push_back(topfivepoints[j]);
-        float pointweight = calcavgweight(topfivepoints[j], padcoords, densities, path[0], desiredpathlength, pathtmp).first;
+        float pointweight = calcweightcap(topfivepoints[j], padcoords, densities, path[0], desiredpathlength, pathtmp, blockData).first;
         if (pointweight < bestavg) {
           bestavg = pointweight;
           bestavgindex = topfivepoints[j];
@@ -209,10 +243,22 @@ int main() {
   while (densfile >> x) densities.push_back(x);
   densfile.close();
   padfile.close();
+  ifstream gemstoneData("blockarraydatav3.txt");
+  vector<vector<vector<int> > > blockData;
+  blockData.resize(622);
+  for (int x = 0; x < 622; x++) {
+    blockData[x].resize(256);
+    for (int y = 0; y < 256; y++) {
+      blockData[x][y].resize(622);
+      for (int z = 0; z < 622; z++) {
+        gemstoneData >> blockData[x][y][z];
+      }
+    }
+  }
   for (int i = 0; i < 25; i++) {
     if (i == 12) continue;
     cout << i + 1 << endl;
     //runsec(i, padcoords, densities);
-    cout << runsec(i, padcoords, densities) << endl;
+    cout << runsec(i, padcoords, densities, blockData) << endl;
   }
 }
