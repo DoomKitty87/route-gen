@@ -126,38 +126,28 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
   //For each possible starting point
   //Create an average weight from that point of the top 5 weights of the next points to go to for it
   //Then continue based on a series of two points: current point (final) -> 5 possible points (determine top by getting one with best average weights in its top 5)
-  float highestDens = 0;
-  string highestDensPath;
-  int startPoint = 0;
-  int bestWght = INFINITY;
-  vector<int> path;
+  float lowestDist = INFINITY;
+  string lowestDistPath;
   for (int i = 0; i < densities.size(); i++) {
-    int weight = calcweightcap(i, padcoords, densities, -1, desiredpathlength, path).first;
-    if (weight < bestWght) {
-      bestWght = weight;
-      startPoint = i;
-    }
-  }
-  //for (int i = 0; i < densities.size(); i++) {
     int bestavgindex;
     float bestavg = INFINITY;
-    //vector<int> path;
-    int currpoint = startPoint;
-    for (int i = 0; i < desiredpathlength; i++) {
+    vector<int> path;
+    int currpoint = i;
+    for (int j = 0; j < desiredpathlength; j++) {
       //cout << "Determining pad " << i + 1 << endl;
       path.push_back(currpoint);
-      vector<int> topfivepoints = calcavgweight(currpoint, padcoords, densities, path[0], desiredpathlength, path).second;
+      vector<int> topfivepoints = calcweightcap(currpoint, padcoords, densities, path[0], desiredpathlength, path).second;
       bestavgindex = -1;
       bestavg = INFINITY;
       //cout << topfivepoints.size() << endl;
-      for (int j = 0; j < topfivepoints.size(); j++) {
+      for (int k = 0; k < topfivepoints.size(); k++) {
         //cout << "running test on " << j << endl;
         vector<int> pathtmp = path;
         pathtmp.push_back(topfivepoints[j]);
-        float pointweight = calcavgweight(topfivepoints[j], padcoords, densities, path[0], desiredpathlength, pathtmp).first;
+        float pointweight = calcweightcap(topfivepoints[k], padcoords, densities, path[0], desiredpathlength, pathtmp).first;
         if (pointweight < bestavg) {
           bestavg = pointweight;
-          bestavgindex = topfivepoints[j];
+          bestavgindex = topfivepoints[k];
         }
       }
       if (topfivepoints.size() == 0) break;
@@ -180,17 +170,17 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) 
     for (int i = 0; i < path.size() - 1; i++) {
       dist += sqrt(pow(padcoords[path[i]][0] - padcoords[path[i + 1]][0], 2) + pow(padcoords[path[i]][1] - padcoords[path[i + 1]][1], 2) + pow(padcoords[path[i]][2] - padcoords[path[i + 1]][2], 2));
     }
-    dist /= path.size();
     dens /= path.size();
-    cout << dens << endl;
-    cout << dist << endl;
-    if (dens > highestDens) {
-      highestDens = dens;
-      highestDensPath = pathexport;
+    dist /= path.size();
+    //cout << dens << endl;
+    //cout << dist << endl;
+    if (dist < lowestDist) {
+      lowestDist = dist;
+      lowestDistPath = pathexport;
     }
-  //}
+  }
 
-  return highestDensPath;
+  return lowestDistPath;
 }
 
 int main() {
