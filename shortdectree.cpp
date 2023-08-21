@@ -15,11 +15,11 @@ pair<float, vector<int> > calcweightcap(int curr, vector<vector<int> > padcoords
     bool cntue = false;
     for (int j = 0; j < padsused.size(); j++) {
       if (i == padsused[j]) cntue = true;
-      if (abs(padcoords[i][0] - padcoords[padsused[j]][0] < 3) && abs(padcoords[i][1] - padcoords[padsused[j]][1] < 3) && abs(padcoords[i][2] - padcoords[padsused[j]][2]) < 3) cntue = true;
     }
     if (cntue) continue;
     //cout << "Starting weight calcluation" << endl;
     float weight = 0;
+    if (abs(padcoords[i][0] - padcoords[curr][0]) < 3 && abs(padcoords[i][1] - padcoords[curr][1]) < 3 && abs(padcoords[i][2] - padcoords[curr][2]) < 3) continue;
     float dist = sqrt(pow(padcoords[i][0] - padcoords[curr][0], 2) + pow(padcoords[i][1] - padcoords[curr][1], 2) + pow(padcoords[i][2] - padcoords[curr][2], 2));
     if (startingpad == -1) { // ignore distance to start component
       //weight = pow(dist, 2) / float(pow(densities[i] - 44, 5));
@@ -28,11 +28,10 @@ pair<float, vector<int> > calcweightcap(int curr, vector<vector<int> > padcoords
     else {
       float startdist = sqrt(pow(padcoords[i][0] - padcoords[startingpad][0], 2) + pow(padcoords[i][1] - padcoords[startingpad][1], 2) + pow(padcoords[i][2] - padcoords[startingpad][2], 2));
       //weight = ((pow(dist, 2) + pow(startdist, 2 * (padsused.size() / float(desiredlength))))) / float(pow(densities[i] - 44, 5));
-      weight = ((pow(dist, 2) + pow(startdist, 2 * (padsused.size() / float(desiredlength)))));
+      weight = ((pow(dist, 3) + pow(startdist, 2 * (padsused.size() / float(desiredlength)))));
     }
     //cout << "Done with weight calculation" << endl;
     if (dist > 62) continue;
-    
     //Calcluate weight
     if (weight < weightthreshold) {
       topfivepoints.push_back(i);
@@ -77,8 +76,7 @@ pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords
     //cout << "Starting weight calcluation" << endl;
     vector<int> padsusedtmp = padsused;
     padsusedtmp.push_back(curr);
-    float weight = 0;
-    //float weight = calcweightcap(i, padcoords, densities, startingpad, desiredlength, padsusedtmp).first;
+    float weight = calcweightcap(i, padcoords, densities, startingpad, desiredlength, padsusedtmp).first;
     //Calcluate weight
     if (weight < weightthreshold) {
       topfivepoints.push_back(i);
@@ -108,8 +106,8 @@ pair<float, vector<int> > calcavgweight(int curr, vector<vector<int> > padcoords
   return {avgweight, topfivepoints};
 }
 //Make main a function to run one sector later, then put a simple for loop in main!!!
-string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput, vector<vector<vector<int> > > blockData) {
-  int desiredpathlength = 150;
+string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput) {
+  int desiredpathlength = 140;
   // Coords in ch go from 202-823 (inclusive)
   int xstart = 823 - ((sector % 5) * 128);
   int xend = xstart - 128;
@@ -164,47 +162,6 @@ string runsec(int sector, vector<vector<int> > padinput, vector<int> densinput, 
         }
       }
       if (topfivepoints.size() == 0) break;
-      bool blocked = false;
-      while (blocked) {
-        //cout << "C.6" << endl;
-        //cout << "Checking for blocking." << endl;
-        int headx = padcoords[path[path.size() - 1]][0];
-        int heady = padcoords[path[path.size() - 1]][1] + 2;
-        int headz = padcoords[path[path.size() - 1]][2];
-        int tailx = padcoords[bestavgindex][0];
-        int taily = padcoords[bestavgindex][1];
-        int tailz = padcoords[bestavgindex][2];
-        blocked = false;
-        int xdist = tailx - headx;
-        int ydist = taily - heady;
-        int zdist = tailz - headz;
-        int interval = floor(abs(xdist) + abs(ydist) + abs(zdist));
-        for (int k = 1; k < interval; k++) {
-          //if (k > 5 && k < interval - 5) continue;
-          //cout << k << endl;
-          int x = round(headx + (float(xdist) / interval) * k);
-          int y = round(heady + (float(ydist) / interval) * k);
-          int z = round(headz + (float(zdist) / interval) * k);
-          if (max(abs(x - headx), abs(z - headz)) < 2 && abs(y - heady) < 3) continue;
-          //cout << x - 202 << " " << y << " " << z - 202 << endl;
-          if (x - 202 > 621 || x - 202 < 0 || y > 255 || y < 0 || z - 202 > 621 || z - 202 < 0) continue;
-          if (blockData[x - 202][y][z - 202] != 0) blocked = true;
-        }
-        if (blocked) {
-          topfivepoints = calcweightcap(currpoint, padcoords, densities, path[0], desiredpathlength, path).second;
-          bestavgindex = -1;
-          bestavg = INFINITY;
-          for (int j = 0; j < topfivepoints.size(); j++) {
-          vector<int> pathtmp = path;
-          pathtmp.push_back(topfivepoints[j]);
-          float pointweight = calcweightcap(topfivepoints[j], padcoords, densities, path[0], desiredpathlength, pathtmp).first;
-            if (pointweight < bestavg) {
-              bestavg = pointweight;
-              bestavgindex = topfivepoints[j];
-            }
-          }
-        }
-      }
       currpoint = bestavgindex;
     }
 
@@ -253,22 +210,10 @@ int main() {
   while (densfile >> x) densities.push_back(x);
   densfile.close();
   padfile.close();
-  ifstream gemstoneData("blockarraydatav3.txt");
-  vector<vector<vector<int> > > blockData;
-  blockData.resize(622);
-  for (int x = 0; x < 622; x++) {
-    blockData[x].resize(256);
-    for (int y = 0; y < 256; y++) {
-      blockData[x][y].resize(622);
-      for (int z = 0; z < 622; z++) {
-        gemstoneData >> blockData[x][y][z];
-      }
-    }
-  }
   for (int i = 0; i < 25; i++) {
     if (i == 12) continue;
     cout << i + 1 << endl;
     //runsec(i, padcoords, densities);
-    cout << runsec(i, padcoords, densities, blockData) << endl;
+    cout << runsec(i, padcoords, densities) << endl;
   }
 }
