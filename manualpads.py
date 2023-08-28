@@ -1,6 +1,6 @@
 import json
 
-blocks = json.load(open("ruby.json", "r"))
+blocks = json.load(open("topaz.json", "r"))
 outblocks = blocks
 print(len(blocks))
 for b in blocks:
@@ -9,5 +9,5 @@ for b in blocks:
       outblocks.remove(d)
       #print("Removed block at " + str(d))
 print(len(blocks))
-with open('rubypads.json', 'w') as f:
+with open('topazpads.json', 'w') as f:
   json.dump(blocks, f)

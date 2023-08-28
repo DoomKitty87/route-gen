@@ -9,9 +9,9 @@ for x in range(202, 824):
       block = level.get_block(x, y, z, "minecraft:overworld")
       if (block.base_name == "stained_glass" or block.base_name == "stained_glass_pane"):
         #print(level.get_block(x, y, z, "minecraft:overworld").properties['color'])
-        if (block.properties['color'] == "red"):
+        if (block.properties['color'] == "yellow"):
           blocks.append([x, y, z])
-          print(len(blocks))
-with open('ruby.json', 'w') as f:
+          #print(len(blocks))
+with open('topaz.json', 'w') as f:
   json.dump(blocks, f)
 level.close()
