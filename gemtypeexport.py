@@ -12,9 +12,9 @@ for x in range(202, 824):
         #if (block.properties['color'] == "yellow"):
           #blocks.append([x, y, z])
           #print(len(blocks))
-      if (block.base_name == "redstone_ore"):
+      if (block.base_name == "lapis_ore"):
         blocks.append([x, y, z])
         #print(len(blocks))
-with open('redstone.json', 'w') as f:
+with open('lapis.json', 'w') as f:
   json.dump(blocks, f)
 level.close()
