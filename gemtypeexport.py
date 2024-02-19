@@ -1,7 +1,7 @@
 import amulet
 import json
 
-level = amulet.load_level("world")
+level = amulet.load_level("clean")
 blocks = [];
 for x in range(202, 824):
   for y in range(0, 256):
@@ -15,6 +15,6 @@ for x in range(202, 824):
       if (block.base_name == "lapis_ore"):
         blocks.append([x, y, z])
         #print(len(blocks))
-with open('lapis.json', 'w') as f:
+with open('lapisclean.json', 'w') as f:
   json.dump(blocks, f)
 level.close()
